@@ -1,128 +1,111 @@
 import React from 'react';
 import { defineBlock } from '../../sdk/block';
-import { getFontClass, getReadableTextColor } from '../../utils/styleUtils';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { getReadableTextColor } from '../../utils/styleUtils';
 
 export default defineBlock({
   id: 'billboard-mockup',
-  title: 'BillboardMockup',
-  category: 'mockups' as any,
-  description: 'Bloco de apresentação de marca para BillboardMockup, reativo aos tokens de design.',
-  defaultLayout: '2-col-50-50' as any,
-  variants: ['Default', 'Minimal'] as const,
+  title: 'Outdoor Billboard Mockup',
+  category: 'mockups',
+  description:
+    'Mockup editorial em grande escala de outdoor urbano de alto impacto.',
+  defaultLayout: '2-col-50-50',
+  variants: ['Default', 'Inverted', 'Monochrome'] as const,
   subElements: [
-    { id: 'card', label: 'Card Container', category: 'Surfaces' },
-    { id: 'headline', label: 'Título / Headline', category: 'Typography' },
-    { id: 'badge', label: 'Pílula de Destaque', category: 'Badges' },
-    { id: 'action', label: 'Botão de Ação', category: 'Actions' },
+    { id: 'headline', label: 'Headline Principal', category: 'Typography' },
+    { id: 'tagline', label: 'Assinatura da Marca', category: 'Typography' },
   ],
   render: ({
     tokens,
     activeVariant = 'Default',
     selectedSubElementId,
     onSelectSubElement,
-    isDark = true,
+    isDark = false,
   }) => {
-    const isMinimal = activeVariant === 'Minimal';
-    const fontClass = getFontClass(tokens.fontFamily);
-    const readableText = getReadableTextColor(tokens.primaryColor);
+    const isInverted = activeVariant === 'Inverted';
+    const isMono = activeVariant === 'Monochrome';
+
+    const brandColor = tokens.primaryColor;
+    const accentColor = tokens.accentColor || brandColor;
+
+    const bg = isMono
+      ? (isDark ? '#09090b' : '#f4f4f5')
+      : isInverted
+      ? accentColor
+      : (isDark ? '#121215' : '#ffffff');
+
+    const fg = isMono
+      ? (isDark ? '#ffffff' : '#09090b')
+      : isInverted
+      ? getReadableTextColor(accentColor)
+      : (isDark ? '#f4f4f5' : '#09090b');
+
+    const subtleFg = `${fg}80`;
+
+    const headingStyle: React.CSSProperties = {
+      fontFamily: tokens.headingFont,
+      fontWeight: tokens.headingWeight || 700,
+      letterSpacing: `${tokens.letterSpacingEm || -0.03}em`,
+    };
+
+    const bodyStyle: React.CSSProperties = {
+      fontFamily: tokens.bodyFont,
+      fontWeight: tokens.bodyWeight || 400,
+    };
 
     return (
       <div
-        className="w-full h-full flex flex-col justify-between p-7 rounded-[24px] bg-card border border-border/70 overflow-hidden select-none relative group transition-all"
+        className="w-full h-full flex flex-col justify-between p-8 sm:p-12 rounded-[24px] overflow-hidden select-none transition-colors duration-200 border border-border/40 relative"
         style={{
-          borderRadius: `${Math.max(16, tokens.radiusPx + 4)}px`,
+          backgroundColor: bg,
+          color: fg,
+          borderRadius: `${Math.max(20, tokens.radiusPx + 4)}px`,
         }}
       >
-        {/* Header do Bloco */}
-        <div className="flex items-center justify-between z-10">
-          <div className="flex items-center gap-2">
-            <span
-              onClick={(e) => {
-                e.stopPropagation();
-                onSelectSubElement?.('badge');
-              }}
-              className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide uppercase transition-all cursor-pointer ${
-                selectedSubElementId === 'badge'
-                  ? 'ring-2 ring-primary ring-offset-2'
-                  : ''
-              }`}
-              style={{
-                backgroundColor: tokens.primaryColor,
-                color: readableText,
-              }}
-            >
-              BillboardMockup
-            </span>
-          </div>
-
-          <span className="text-xs font-mono text-muted-foreground/80 px-2 py-0.5 rounded-md bg-muted/60 border border-border/40">
-            {activeVariant}
-          </span>
+        {/* Metadado Sutil de Canto */}
+        <div className="flex items-center justify-between text-[10px] font-mono tracking-[0.2em] uppercase opacity-60">
+          <span>{tokens.brandName} // Large Scale 16:9</span>
+          <span>Tokyo • Shibuya 01</span>
         </div>
 
-        {/* Corpo do Bloco */}
+        {/* Tipografia de Grande Impacto Editorial */}
         <div
           onClick={(e) => {
             e.stopPropagation();
-            onSelectSubElement?.('card');
+            onSelectSubElement?.('headline');
           }}
-          className={`my-auto p-6 rounded-[18px] bg-muted/30 border border-border/40 transition-all cursor-pointer relative overflow-hidden ${
-            selectedSubElementId === 'card'
-              ? 'ring-2 ring-primary ring-offset-2 ring-offset-background'
-              : ''
+          className={`my-auto py-6 cursor-pointer transition-all ${
+            selectedSubElementId === 'headline' ? 'opacity-80' : ''
           }`}
         >
-          <h3
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelectSubElement?.('headline');
-            }}
-            className={`text-xl font-bold tracking-tight text-foreground transition-all ${fontClass} ${
-              selectedSubElementId === 'headline'
-                ? 'underline decoration-primary decoration-2 underline-offset-4'
-                : ''
-            }`}
+          <div
+            className="text-4xl sm:text-6xl md:text-7xl font-bold leading-[0.92] tracking-tighter"
+            style={headingStyle}
           >
-            {isMinimal ? 'BillboardMockup' : tokens.brandName}
-          </h3>
-
-          <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-            Bloco de apresentação de marca para BillboardMockup, reativo aos tokens de design.
-          </p>
-
-          {!isMinimal && (
-            <div className="mt-5 flex items-center gap-3">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSelectSubElement?.('action');
-                }}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shadow-sm ${
-                  selectedSubElementId === 'action'
-                    ? 'ring-2 ring-primary ring-offset-2 ring-offset-background'
-                    : ''
-                }`}
-                style={{
-                  backgroundColor: tokens.primaryColor,
-                  color: readableText,
-                  borderRadius: `${tokens.radiusPx}px`,
-                }}
-              >
-                <span>Explorar</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          )}
+            {tokens.brandName}
+          </div>
+          <div
+            className="text-sm sm:text-base mt-4 max-w-md opacity-80 leading-relaxed font-light"
+            style={bodyStyle}
+          >
+            {tokens.tagline || 'The living brand system engineered for modern identities.'}
+          </div>
         </div>
 
-        {/* Rodapé do Bloco */}
-        <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border/40 z-10">
-          <div className="flex items-center gap-1.5 font-mono text-[11px]">
-            <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span>Preset: {tokens.presetId}</span>
-          </div>
-          <span className="font-mono text-[11px]">Raio: {tokens.radiusPx}px</span>
+        {/* Rodapé Tipográfico Puro (Sem debug, apenas assinatura da marca) */}
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelectSubElement?.('tagline');
+          }}
+          className="flex items-baseline justify-between pt-6 border-t cursor-pointer"
+          style={{ borderColor: `${fg}15` }}
+        >
+          <span className="text-xs font-mono tracking-widest uppercase" style={{ color: subtleFg }}>
+            Autumn / Winter Campaign
+          </span>
+          <span className="text-xs font-semibold" style={{ color: isMono ? fg : brandColor }}>
+            koyot.design
+          </span>
         </div>
       </div>
     );

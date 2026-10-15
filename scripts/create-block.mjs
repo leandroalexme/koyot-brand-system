@@ -47,7 +47,7 @@ Opções:
   --description, -d Descrição do bloco [opcional]
 
 Exemplo:
-  npm run create:block -- --name "BillboardMockup" --category "mockups"
+  npm run create:block -- --name "PackagingMockup" --category "mockups"
 `);
   process.exit(1);
 }
@@ -64,7 +64,7 @@ const category = params.category.toLowerCase();
 const layout = params.layout;
 const description =
   params.description ||
-  `Bloco de apresentação de marca para ${rawName}, reativo aos tokens de design.`;
+  `Mockup visual e editorial de ${rawName}, reativo aos tokens de design.`;
 
 const targetDir = path.join(rootDir, 'frontend', 'blocks', category);
 if (!fs.existsSync(targetDir)) {
@@ -80,8 +80,7 @@ if (fs.existsSync(targetFile)) {
 
 const template = `import React from 'react';
 import { defineBlock } from '../../sdk/block';
-import { getFontClass, getReadableTextColor } from '../../utils/styleUtils';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { getReadableTextColor } from '../../utils/styleUtils';
 
 export default defineBlock({
   id: '${slug}',
@@ -89,12 +88,10 @@ export default defineBlock({
   category: '${category}' as any,
   description: '${description}',
   defaultLayout: '${layout}' as any,
-  variants: ['Default', 'Minimal'] as const,
+  variants: ['Default', 'Brand Surface', 'Dark'] as const,
   subElements: [
-    { id: 'card', label: 'Card Container', category: 'Surfaces' },
-    { id: 'headline', label: 'Título / Headline', category: 'Typography' },
-    { id: 'badge', label: 'Pílula de Destaque', category: 'Badges' },
-    { id: 'action', label: 'Botão de Ação', category: 'Actions' },
+    { id: 'headline', label: 'Headline Principal', category: 'Typography' },
+    { id: 'subtext', label: 'Texto Descritivo', category: 'Typography' },
   ],
   render: ({
     tokens,
@@ -103,8 +100,36 @@ export default defineBlock({
     onSelectSubElement,
     isDark = false,
   }) => {
-    const isMinimal = activeVariant === 'Minimal';
-    const readableText = getReadableTextColor(tokens.primaryColor);
+    const isBrandSurface = activeVariant === 'Brand Surface';
+    const isDarkMode = activeVariant === 'Dark' || isDark;
+
+    const brandColor = tokens.primaryColor;
+    const accentColor = tokens.accentColor || brandColor;
+
+    // Fundo do Bloco: Branco puro, fundo sutil de token ou superfície escura (Zero sombras)
+    const bgColor = isBrandSurface
+      ? accentColor
+      : isDarkMode
+      ? '#09090b'
+      : '#ffffff';
+
+    const textColor = isBrandSurface
+      ? getReadableTextColor(accentColor)
+      : isDarkMode
+      ? '#f4f4f5'
+      : '#09090b';
+
+    const subtleTextColor = isBrandSurface
+      ? \`\${textColor}99\`
+      : isDarkMode
+      ? '#a1a1aa'
+      : '#71717a';
+
+    const borderColor = isBrandSurface
+      ? \`\${textColor}20\`
+      : isDarkMode
+      ? 'rgba(255,255,255,0.08)'
+      : 'rgba(0,0,0,0.06)';
 
     const headingStyle: React.CSSProperties = {
       fontFamily: tokens.headingFont,
@@ -119,101 +144,60 @@ export default defineBlock({
 
     return (
       <div
-        className="w-full h-full flex flex-col justify-between p-7 rounded-[24px] bg-card border border-border/70 overflow-hidden select-none relative group transition-all"
+        className="w-full h-full flex flex-col justify-between p-8 sm:p-10 rounded-[24px] overflow-hidden select-none transition-colors duration-200 border border-border/40"
         style={{
-          borderRadius: \`\${Math.max(16, tokens.radiusPx + 4)}px\`,
+          backgroundColor: bgColor,
+          color: textColor,
+          borderRadius: \`\${Math.max(20, tokens.radiusPx + 4)}px\`,
         }}
       >
-        {/* Header do Bloco */}
-        <div className="flex items-center justify-between z-10">
-          <div className="flex items-center gap-2">
-            <span
-              onClick={(e) => {
-                e.stopPropagation();
-                onSelectSubElement?.('badge');
-              }}
-              className={\`px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide uppercase transition-all cursor-pointer \${
-                selectedSubElementId === 'badge'
-                  ? 'ring-2 ring-primary ring-offset-2'
-                  : ''
-              }\`}
-              style={{
-                backgroundColor: tokens.primaryColor,
-                color: readableText,
-              }}
-            >
-              ${rawName}
-            </span>
-          </div>
-
-          <span className="text-xs font-mono text-muted-foreground/80 px-2 py-0.5 rounded-md bg-muted/60 border border-border/40">
-            {activeVariant}
+        {/* Topo Sutil Editorial (Sem badges de debug) */}
+        <div
+          className="flex items-center justify-between pb-6 border-b text-[10px] font-mono tracking-[0.2em] uppercase"
+          style={{ borderColor, color: subtleTextColor }}
+        >
+          <span>{tokens.brandName} // ${rawName}</span>
+          <span className="font-semibold" style={{ color: isBrandSurface ? textColor : brandColor }}>
+            Editorial Showcase
           </span>
         </div>
 
-        {/* Corpo do Bloco */}
+        {/* Conteúdo Central Direto na Prancheta (Sem card-in-card, sem sombras) */}
         <div
           onClick={(e) => {
             e.stopPropagation();
-            onSelectSubElement?.('card');
+            onSelectSubElement?.('headline');
           }}
-          className={\`my-auto p-6 rounded-[18px] bg-muted/30 border border-border/40 transition-all cursor-pointer relative overflow-hidden \${
-            selectedSubElementId === 'card'
-              ? 'ring-2 ring-primary ring-offset-2 ring-offset-background'
-              : ''
+          className={\`my-auto py-8 cursor-pointer transition-all \${
+            selectedSubElementId === 'headline' ? 'opacity-80' : ''
           }\`}
         >
-          <h3
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelectSubElement?.('headline');
-            }}
-            className={\`text-xl tracking-tight text-foreground transition-all \${
-              selectedSubElementId === 'headline'
-                ? 'underline decoration-primary decoration-2 underline-offset-4'
-                : ''
-            }\`}
+          <h2
+            className="text-3xl sm:text-5xl font-bold tracking-tight leading-[1.05]"
             style={headingStyle}
           >
-            {isMinimal ? '${rawName}' : tokens.brandName}
-          </h3>
+            {tokens.brandName}
+          </h2>
 
-          <p className="text-sm text-muted-foreground mt-2 line-clamp-2" style={bodyStyle}>
+          <p
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelectSubElement?.('subtext');
+            }}
+            className="text-sm sm:text-base mt-3 max-w-md leading-relaxed"
+            style={{ ...bodyStyle, color: subtleTextColor }}
+          >
             ${description}
           </p>
-
-          {!isMinimal && (
-            <div className="mt-5 flex items-center gap-3">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSelectSubElement?.('action');
-                }}
-                className={\`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shadow-sm \${
-                  selectedSubElementId === 'action'
-                    ? 'ring-2 ring-primary ring-offset-2 ring-offset-background'
-                    : ''
-                }\`}
-                style={{
-                  backgroundColor: tokens.primaryColor,
-                  color: readableText,
-                  borderRadius: \`\${tokens.radiusPx}px\`,
-                }}
-              >
-                <span>Explorar</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          )}
         </div>
 
-        {/* Rodapé do Bloco */}
-        <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border/40 z-10">
-          <div className="flex items-center gap-1.5 font-mono text-[11px]">
-            <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span>Preset: {tokens.presetId}</span>
-          </div>
-          <span className="font-mono text-[11px]">Raio: {tokens.radiusPx}px</span>
+        {/* Rodapé Tipográfico Limpo */}
+        <div
+          className="flex items-center justify-between pt-6 border-t text-[11px] font-mono"
+          style={{ borderColor, color: subtleTextColor }}
+        >
+          <span>TYPOGRAPHY: {tokens.headingFont}</span>
+          <span className="uppercase">GRID: {tokens.scale || 'DEFAULT'}</span>
         </div>
       </div>
     );
@@ -224,7 +208,7 @@ export default defineBlock({
 fs.writeFileSync(targetFile, template, 'utf-8');
 
 console.log(`
-\x1b[32m✔ Bloco criado com sucesso!\x1b[0m
+\x1b[32m✔ Bloco ultra-minimalista criado com sucesso!\x1b[0m
   Arquivo: \x1b[36mfrontend/blocks/${category}/${componentName}.tsx\x1b[0m
   Slug ID: \x1b[33m${slug}\x1b[0m
   Categoria: \x1b[33m${category}\x1b[0m
