@@ -684,7 +684,7 @@ export function App() {
                             variantState: 'Default',
                           });
                         }}
-                        className={`group/block relative flex flex-col min-w-0 rounded-[24px] transition ${getBlockColSpanClass(
+                        className={`group/block relative flex flex-col min-w-0 rounded-[24px] transition h-full ${getBlockColSpanClass(
                           row.layout,
                           blkIdx
                         )} ${
