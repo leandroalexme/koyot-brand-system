@@ -149,18 +149,27 @@ export const AddBlockModal: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 pt-2 border-t border-zinc-200/40 dark:border-zinc-700/40">
+                <div className="flex items-center gap-1.5 pt-2 border-t border-zinc-200/40 dark:border-zinc-700/40">
                   <button
                     onClick={() => handleAddNewRow('1-col', item.type)}
-                    className="flex-1 py-1.5 px-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:opacity-90 text-xs font-medium transition"
+                    className="flex-1 py-1.5 px-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:opacity-90 text-[11px] font-medium transition text-center"
+                    title="Página Inteira (1 Bloco Full)"
                   >
-                    1 Coluna
+                    1 Col
                   </button>
                   <button
                     onClick={() => handleAddNewRow('2-col-50-50', item.type)}
-                    className="flex-1 py-1.5 px-2.5 rounded-lg bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-600 border border-zinc-200/80 dark:border-zinc-600 text-xs font-medium transition"
+                    className="flex-1 py-1.5 px-2 rounded-lg bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-600 border border-zinc-200/80 dark:border-zinc-600 text-[11px] font-medium transition text-center"
+                    title="2 Colunas (50/50)"
                   >
-                    2 Colunas
+                    50/50
+                  </button>
+                  <button
+                    onClick={() => handleAddNewRow('2x2', item.type)}
+                    className="flex-1 py-1.5 px-2 rounded-lg bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-600 border border-zinc-200/80 dark:border-zinc-600 text-[11px] font-medium transition text-center"
+                    title="4 Quadrantes (2x2)"
+                  >
+                    2x2
                   </button>
                 </div>
               </div>

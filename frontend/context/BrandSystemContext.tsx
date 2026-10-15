@@ -49,6 +49,7 @@ export interface BrandSystemContextValue {
   activeMode: AppMode;
   setActivePageId: (id: PageId) => void;
   handleAddNewRow: (layout: ColumnLayout, blockType: BlockType) => void;
+  handleChangeRowLayout: (rowId: string, layout: ColumnLayout) => void;
   handleDeleteRow: (rowId: string) => void;
   handleMoveRow: (fromIndex: number, direction: 'up' | 'down') => void;
   handleUpdateBlock: (
@@ -271,10 +272,28 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
         theme: 'light',
       };
 
+      let initialBlocks: EditorialBlock[] = [newBlock];
+      if (layout === '2-col-50-50' || layout === '2-col-66-33' || layout === '2-col-33-66') {
+        initialBlocks = [newBlock, { ...newBlock, id: `blk-${Date.now()}-2` }];
+      } else if (layout === '3-col') {
+        initialBlocks = [
+          newBlock,
+          { ...newBlock, id: `blk-${Date.now()}-2` },
+          { ...newBlock, id: `blk-${Date.now()}-3` },
+        ];
+      } else if (layout === '4-col' || layout === '2x2') {
+        initialBlocks = [
+          newBlock,
+          { ...newBlock, id: `blk-${Date.now()}-2` },
+          { ...newBlock, id: `blk-${Date.now()}-3` },
+          { ...newBlock, id: `blk-${Date.now()}-4` },
+        ];
+      }
+
       const newRow: EditorialRow = {
         id: `row-${Date.now()}`,
         layout,
-        blocks: layout === '2-col-50-50' ? [newBlock, { ...newBlock, id: `blk-${Date.now()}-2` }] : [newBlock],
+        blocks: initialBlocks,
       };
 
       setPages((prev) =>
@@ -285,6 +304,58 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
         )
       );
       setAddBlockModalOpen(false);
+    },
+    [activePageId]
+  );
+
+  const handleChangeRowLayout = useCallback(
+    (rowId: string, nextLayout: ColumnLayout) => {
+      setPages((prev) =>
+        prev.map((p) => {
+          if (p.id !== activePageId) return p;
+          return {
+            ...p,
+            rows: p.rows.map((r) => {
+              if (r.id !== rowId) return r;
+              let targetCount = 1;
+              if (
+                nextLayout === '2-col-50-50' ||
+                nextLayout === '2-col-66-33' ||
+                nextLayout === '2-col-33-66'
+              ) {
+                targetCount = 2;
+              } else if (nextLayout === '3-col') {
+                targetCount = 3;
+              } else if (nextLayout === '4-col' || nextLayout === '2x2') {
+                targetCount = 4;
+              }
+
+              let updatedBlocks = [...r.blocks];
+              while (updatedBlocks.length < targetCount) {
+                const baseBlock = updatedBlocks[0] || {
+                  id: `blk-${Date.now()}`,
+                  type: 'typography-sculpture',
+                  title: 'Block',
+                  theme: 'light',
+                };
+                updatedBlocks.push({
+                  ...baseBlock,
+                  id: `blk-${Date.now()}-${updatedBlocks.length + 1}`,
+                });
+              }
+              if (updatedBlocks.length > targetCount) {
+                updatedBlocks = updatedBlocks.slice(0, targetCount);
+              }
+
+              return {
+                ...r,
+                layout: nextLayout,
+                blocks: updatedBlocks,
+              };
+            }),
+          };
+        })
+      );
     },
     [activePageId]
   );
@@ -386,6 +457,7 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
       activeMode,
       setActivePageId,
       handleAddNewRow,
+      handleChangeRowLayout,
       handleDeleteRow,
       handleMoveRow,
       handleUpdateBlock,

@@ -132,7 +132,14 @@ export interface BrandTokens {
   shadowDepth: 'none' | 'subtle' | 'elevated';
 }
 
-export type ColumnLayout = '1-col' | '2-col-50-50' | '2-col-66-33' | '2-col-33-66' | '3-col';
+export type ColumnLayout =
+  | '1-col'
+  | '2-col-50-50'
+  | '2-col-66-33'
+  | '2-col-33-66'
+  | '3-col'
+  | '4-col'
+  | '2x2';
 
 export type BlockCategory =
   | 'identity'

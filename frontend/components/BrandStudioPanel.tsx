@@ -160,7 +160,9 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
   const selectedBlock = props.selectedBlock ?? selectedRow?.blocks.find((b) => b.id === selectedTarget?.blockId) ?? null;
   const selectedRowLayout = props.selectedRowLayout ?? selectedRow?.layout;
   const onChangeRowLayout = props.onChangeRowLayout ?? ((nextLayout) => {
-    // layout update
+    if (selectedTarget?.rowId) {
+      brandSys.handleChangeRowLayout(selectedTarget.rowId, nextLayout);
+    }
   });
   const [studioView, setStudioView] = useState<StudioView>('main');
   const [openEditSections, setOpenEditSections] = useState<
@@ -1119,6 +1121,8 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
                             { value: '2-col-50-50', label: '50/50' },
                             { value: '2-col-66-33', label: '66/33' },
                             { value: '3-col', label: '3 Col' },
+                            { value: '2x2', label: '2x2' },
+                            { value: '4-col', label: '4 Col' },
                           ]}
                           value={selectedRowLayout}
                           onChange={onChangeRowLayout}

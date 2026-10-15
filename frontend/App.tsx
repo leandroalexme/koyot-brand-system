@@ -96,28 +96,32 @@ function AppContent() {
   const getRowGridClass = (layout: ColumnLayout) => {
     switch (layout) {
       case '1-col':
-        return 'grid-cols-1';
+        return 'grid-cols-1 h-full';
       case '2-col-50-50':
-        return 'grid-cols-1 md:grid-cols-2';
+        return 'grid-cols-1 md:grid-cols-2 h-full';
       case '2-col-66-33':
-        return 'grid-cols-1 md:grid-cols-12';
+        return 'grid-cols-1 md:grid-cols-12 h-full';
       case '2-col-33-66':
-        return 'grid-cols-1 md:grid-cols-12';
+        return 'grid-cols-1 md:grid-cols-12 h-full';
       case '3-col':
-        return 'grid-cols-1 md:grid-cols-3';
+        return 'grid-cols-1 md:grid-cols-3 h-full';
+      case '4-col':
+        return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4 h-full';
+      case '2x2':
+        return 'grid-cols-1 md:grid-cols-2 md:grid-rows-2 h-full';
       default:
-        return 'grid-cols-1';
+        return 'grid-cols-1 h-full';
     }
   };
 
   const getBlockColSpanClass = (layout: ColumnLayout, index: number) => {
     if (layout === '2-col-66-33') {
-      return index === 0 ? 'md:col-span-8' : 'md:col-span-4';
+      return index === 0 ? 'md:col-span-8 h-full' : 'md:col-span-4 h-full';
     }
     if (layout === '2-col-33-66') {
-      return index === 0 ? 'md:col-span-4' : 'md:col-span-8';
+      return index === 0 ? 'md:col-span-4 h-full' : 'md:col-span-8 h-full';
     }
-    return '';
+    return 'h-full';
   };
 
   return (
@@ -216,48 +220,64 @@ function AppContent() {
       >
         <div ref={canvasStageRef} className="max-w-[1240px] mx-auto w-full">
           <div className="space-y-5">
-            {activePage.rows.map((row, rowIdx) => (
-              <section key={row.id} className="group/row relative">
-                {isInspectMode && (
-                  <div className="flex items-center justify-between mb-2 px-1 opacity-0 group-hover/row:opacity-100 transition">
-                    <span className="text-[10px] font-mono text-zinc-400">
-                      Bento Row {rowIdx + 1} ·{' '}
-                      {row.layout === '1-col'
-                        ? '1 Column (Full)'
-                        : row.layout === '3-col'
-                        ? '3 Columns'
-                        : '2 Columns (Split)'}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => handleMoveRow(rowIdx, 'up')}
-                        disabled={rowIdx === 0}
-                        className="p-1 rounded bg-white text-zinc-500 hover:text-zinc-900 disabled:opacity-30"
-                      >
-                        <ArrowUp className="w-3 h-3" />
-                      </button>
-                      <button
-                        onClick={() => handleMoveRow(rowIdx, 'down')}
-                        disabled={rowIdx === activePage.rows.length - 1}
-                        className="p-1 rounded bg-white text-zinc-500 hover:text-zinc-900 disabled:opacity-30"
-                      >
-                        <ArrowDown className="w-3 h-3" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteRow(row.id)}
-                        className="p-1 rounded bg-white text-rose-500 hover:bg-rose-50"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
+            {activePage.rows.map((row, rowIdx) => {
+              const pageNumber = String(rowIdx + 1).padStart(2, '0');
+              return (
+                <article
+                  key={row.id}
+                  className="brand-sheet group/row relative w-full flex flex-col justify-between mb-8 sm:mb-12"
+                >
+                  {/* Subtle Presentation Sheet Header (GMR / Cicely Brand Guidelines Style) */}
+                  <div className="flex items-center justify-between mb-2 px-1 text-[11px] font-mono tracking-wider text-zinc-400 select-none">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-zinc-800 dark:text-zinc-200">
+                        SHEET {pageNumber}
+                      </span>
+                      <span className="opacity-30">/</span>
+                      <span className="uppercase text-[10px] tracking-widest">{activePage.label}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {isInspectMode && (
+                        <div className="flex items-center gap-1 opacity-0 group-hover/row:opacity-100 transition">
+                          <button
+                            onClick={() => handleMoveRow(rowIdx, 'up')}
+                            disabled={rowIdx === 0}
+                            className="p-1 rounded bg-white text-zinc-500 hover:text-zinc-900 disabled:opacity-30 shadow-sm"
+                            title="Mover Página Acima"
+                          >
+                            <ArrowUp className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => handleMoveRow(rowIdx, 'down')}
+                            disabled={rowIdx === activePage.rows.length - 1}
+                            className="p-1 rounded bg-white text-zinc-500 hover:text-zinc-900 disabled:opacity-30 shadow-sm"
+                            title="Mover Página Abaixo"
+                          >
+                            <ArrowDown className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteRow(row.id)}
+                            className="p-1 rounded bg-white text-rose-500 hover:bg-rose-50 shadow-sm"
+                            title="Remover Página"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] opacity-40 hidden sm:inline">
+                        16:9 PRESENTATION
+                      </span>
                     </div>
                   </div>
-                )}
 
-                <div
-                  className={`grid gap-5 items-stretch ${getRowGridClass(
-                    row.layout
-                  )}`}
-                >
+                  {/* Canonical Fixed Height Presentation Sheet (All blocks share exact identical height) */}
+                  <div className="w-full min-h-[520px] md:h-[620px] lg:h-[640px] flex flex-col">
+                    <div
+                      className={`grid gap-4 w-full h-full items-stretch ${getRowGridClass(
+                        row.layout
+                      )}`}
+                    >
                   {row.blocks.map((block, blkIdx) => {
                     const isBlockSelected =
                       selectedTarget?.blockId === block.id &&
@@ -378,9 +398,11 @@ function AppContent() {
                       </div>
                     );
                   })}
+                  </div>
                 </div>
-              </section>
-            ))}
+              </article>
+            );
+          })}
           </div>
 
           {isInspectMode && (
