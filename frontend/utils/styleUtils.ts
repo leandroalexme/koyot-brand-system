@@ -482,7 +482,11 @@ export function getContrastRatio(hex1: string, hex2: string): number {
 
 export function getReadableTextColor(bgHex: string): '#FFFFFF' | '#09090B' {
   const lum = getLuminance(bgHex);
-  return lum > 0.42 ? '#09090B' : '#FFFFFF';
+  const lumWhite = 1.0;
+  const lumDark = getLuminance('#09090B');
+  const contrastWithWhite = (lumWhite + 0.05) / (lum + 0.05);
+  const contrastWithDark = (lum + 0.05) / (lumDark + 0.05);
+  return contrastWithDark >= contrastWithWhite ? '#09090B' : '#FFFFFF';
 }
 
 export function getFontClass(font: FontFamilyOption | string): string {

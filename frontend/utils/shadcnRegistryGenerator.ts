@@ -15,6 +15,7 @@ import {
   resolveControlSizePx,
   resolveWeightValue,
   resolveTextMetrics,
+  getUnifiedDesignMetrics,
 } from './overrideUtils';
 import {
   SHADCN_ALL_COMPONENTS,
@@ -36,6 +37,7 @@ function toHslCssTuple(hex: string): string {
  * plus Koyot's extended Neutral 1–10 ramp and 4 semantic font roles.
  */
 export function generateBrandGlobalsCss(tokens: BrandTokens): string {
+  const metrics = getUnifiedDesignMetrics(tokens);
   const neutrals = getNeutralRamp10(tokens.neutralTone);
   const fgOnPrimary = getReadableTextColor(tokens.primaryColor);
   const fgOnSecondary = getReadableTextColor(tokens.secondaryColor);
@@ -96,7 +98,7 @@ export function generateBrandGlobalsCss(tokens: BrandTokens): string {
     /* Neutral 1–10 Ramp (${tokens.neutralTone}) */
 ${neutrals.map((hex, i) => `    --neutral-${i + 1}: ${hex};`).join('\n')}
 
-    /* design.how / Lime System Scoped Tokens */
+    /* Koyot Living Brand System Scoped Tokens */
     --page: ${neutrals[0]};
     --surface: ${neutrals[1]};
     --surface-2: ${neutrals[2]};
@@ -112,11 +114,12 @@ ${neutrals.map((hex, i) => `    --neutral-${i + 1}: ${hex};`).join('\n')}
     --line-strong: ${neutrals[4]};
     --control: ${neutrals[5]};
     --ink: ${neutrals[9]};
-    --accent: ${tokens.primaryColor};
+    --brand-primary: ${tokens.primaryColor};
+    --brand-primary-wash: ${tokens.surfaceTint};
     --accent-wash: ${tokens.surfaceTint};
-    --control-sm: ${Math.max(24, Math.round(32 * tokens.spacingMultiplier))}px;
-    --control-md: ${Math.max(30, Math.round(40 * tokens.spacingMultiplier))}px;
-    --control-lg: ${Math.max(36, Math.round(48 * tokens.spacingMultiplier))}px;
+    --control-sm: ${metrics.controlHeightSm}px;
+    --control-md: ${metrics.controlHeightMd}px;
+    --control-lg: ${metrics.controlHeightLg}px;
     --radius-sm: ${Math.max(0, Math.round(tokens.radiusPx * 0.35))}px;
     --radius-md: ${Math.max(0, Math.round(tokens.radiusPx * 0.6))}px;
     --radius-field: ${Math.max(0, Math.round(tokens.radiusPx * 0.75))}px;
@@ -138,9 +141,78 @@ ${neutrals.map((hex, i) => `    --neutral-${i + 1}: ${hex};`).join('\n')}
 `;
 }
 
+export function generatePortalTsxCode(): string {
+  return `'use client';
+
+import * as React from 'react';
+
+const KoyotPortalContext = React.createContext<HTMLElement | null | undefined>(undefined);
+
+export function KoyotPortalProvider({ children }: { children: React.ReactNode }) {
+  const [container, setContainer] = React.useState<HTMLElement | null>(null);
+  return (
+    <KoyotPortalContext.Provider value={container}>
+      {children}
+      <div ref={setContainer} data-koyot-portal="" />
+    </KoyotPortalContext.Provider>
+  );
+}
+
+let fallback: HTMLElement | null = null;
+
+function getFallbackContainer() {
+  if (typeof document === 'undefined') return null;
+  if (fallback && fallback.isConnected) return fallback;
+  fallback = document.createElement('div');
+  fallback.className = 'koyot';
+  fallback.setAttribute('data-system', 'koyot');
+  fallback.setAttribute('data-koyot-portal', 'fallback');
+  document.body.appendChild(fallback);
+  return fallback;
+}
+
+export function useKoyotPortal() {
+  const scoped = React.useContext(KoyotPortalContext);
+  const [own, setOwn] = React.useState<HTMLElement | null>(null);
+  React.useEffect(() => {
+    if (scoped === undefined) setOwn(getFallbackContainer());
+  }, [scoped]);
+  return scoped === undefined ? own : scoped;
+}
+`;
+}
+
+export function generateUtilsTsCode(): string {
+  return `import { clsx, type ClassValue } from "clsx";
+import { extendTailwindMerge } from "tailwind-merge";
+
+const twMerge = extendTailwindMerge({
+  extend: {
+    theme: {
+      radius: ["field", "panel", "sheet", "control"],
+      shadow: ["card", "menu", "overlay"],
+    },
+  },
+});
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export function mergeClass<State>(
+  base: ClassValue,
+  className: string | ((state: State) => string | undefined) | undefined
+): string | ((state: State) => string) {
+  return typeof className === "function"
+    ? (state: State) => cn(base, className(state))
+    : cn(base, className);
+}
+`;
+}
+
 /**
- * Generates an Agent `SKILL.md` file (modeled after `arla6ka/skills/systems/lime/SKILL.md`)
- * tailored to the user's live BrandTokens so AI coding agents follow the brand's rules and tokens.
+ * Generates an Agent \`SKILL.md\` file tailored to the user's live BrandTokens
+ * so AI coding agents follow the brand's rules, tokens, and verified component contracts.
  */
 export function generateBrandSkillMd(tokens: BrandTokens): string {
   const slug = tokens.brandName.toLowerCase().replace(/\s+/g, '-');
@@ -158,34 +230,40 @@ description: ${tokens.brandName} (${tokens.stylePresetName}) design system rules
 ${tokens.brandCopy.manifestoBody}
 
 ## Setup
-Wrap the root layout in \`className="lime"\` with \`<LimePortalProvider>\` inside it so overlays (menus, dialogs, popovers, selects) inherit every brand token:
+Wrap the root layout in \`<KoyotPortalProvider>\` from \`@/lib/portal\` so overlays (dialogs, popovers, selects) inherit every brand token:
 \`\`\`tsx
-import { LimePortalProvider } from '@/lib/lime/portal';
+import { KoyotPortalProvider } from '@/lib/portal';
 
-<body className="lime">
-  <LimePortalProvider>{children}</LimePortalProvider>
-</body>
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body className="koyot min-h-screen bg-background text-foreground antialiased font-[family-name:var(--font-ui)]">
+        <KoyotPortalProvider>{children}</KoyotPortalProvider>
+      </body>
+    </html>
+  );
+}
 \`\`\`
 
 ## Global Rules
-1. **${slug}-components-first (MUST)**: Use a ${tokens.brandName} primitive from \`@/components/ui/*\` before writing custom markup.
-2. **${slug}-tokens-only (MUST)**: Use only semantic token classes (\`bg-page\`, \`bg-surface\`, \`text-fg\`, \`bg-accent\`, \`border-line\`, \`rounded-control\`, \`h-(--control-md)\`); never hardcode raw hex values or arbitrary pixel sizes.
+1. **${slug}-components-first (MUST)**: Use a verified ${tokens.brandName} primitive from \`@/components/ui/*\` (Button, Input, Dialog, Slider) before writing custom markup.
+2. **${slug}-tokens-only (MUST)**: Use only semantic token classes (\`bg-background\`, \`bg-card\`, \`text-foreground\`, \`bg-primary\`, \`border-border\`, \`h-[var(--control-md)]\`); never hardcode raw hex values or arbitrary pixel sizes.
 3. **${slug}-do-rule (MUST)**: ${tokens.brandCopy.doRuleTitle}.
 4. **${slug}-dont-rule (NEVER)**: ${tokens.brandCopy.dontRuleTitle}.
-5. **${slug}-field-label (MUST)**: Wrap every input, select, slider or combobox in \`<Field>\` with a visible \`<FieldLabel>\`.
+5. **${slug}-contrast-compliance (MUST)**: Always pair foreground and background tokens that pass WCAG AA 4.5:1 minimum contrast.
 
 ## Active Brand Tokens
-- **Primary / Accent (\`--accent\`)**: \`${tokens.primaryColor}\`
-- **Support (\`--support\`)**: \`${tokens.supportColor}\`
-- **Secondary (\`--secondary\`)**: \`${tokens.secondaryColor}\`
-- **Surface Wash (\`--accent-wash\`)**: \`${tokens.surfaceTint}\`
-- **Neutral Ramp**: \`${tokens.neutralTone}\` (\`--surface\`, \`--surface-2\`, \`--surface-3\`, \`--line\`)
+- **Brand Primary (\`--primary\`)**: \`${tokens.primaryColor}\`
+- **Brand Secondary (\`--secondary\`)**: \`${tokens.secondaryColor}\`
+- **Brand Accent (\`--accent\`)**: \`${tokens.accentColor}\`
+- **Surface Wash (\`--surface-tint\`)**: \`${tokens.surfaceTint}\`
+- **Neutral Ramp**: \`${tokens.neutralTone}\`
 - **Typography**:
-  - UI (\`--font-sans\`): \`${uiFont}\` (weight \`${tokens.bodyWeight}\`)
-  - Brand Display: \`${brandFont}\` (weight \`${tokens.headingWeight}\`, tracking \`${tokens.letterSpacingEm}em\`)
-  - Data / Tabular (\`--font-mono\`): \`${dataFont}\`
+  - UI (\`--font-ui\`): \`${uiFont}\` (weight \`${tokens.bodyWeight}\`)
+  - Brand Display (\`--font-brand\`): \`${brandFont}\` (weight \`${tokens.headingWeight}\`, tracking \`${tokens.letterSpacingEm}em\`)
+  - Data / Tabular (\`--font-data\`): \`${dataFont}\`
 - **Geometry & Scale**:
-  - Corner Radius (\`--radius-panel\`): \`${tokens.radiusPx}px\`
+  - Corner Radius (\`--radius\`): \`${tokens.radiusPx}px\`
   - Font Scale: \`${Math.round(tokens.fontScale * 100)}%\`
   - Spacing Multiplier: \`${Math.round(tokens.spacingMultiplier * 100)}%\`
 `;
@@ -321,83 +399,265 @@ export { Slider }
     }
 
     case 'button': {
-      const btnOvr = subOverrides.button;
-      const labelOvr = subOverrides.label;
-      const btnRadius = resolveCornerRadiusCss(btnOvr, tokens.radiusPx);
-      const btnHeight = resolveControlSizePx(btnOvr?.controlSize || 'L', 40);
-      const primaryBg = btnOvr?.fillToken
-        ? resolveSemanticColorToken(btnOvr.fillToken, tokens).hex
-        : tokens.primaryActionStyle === 'neutral'
-        ? '#09090B'
-        : tokens.primaryColor;
-      const primaryFg = getReadableTextColor(primaryBg);
-      const fontWeight = resolveWeightValue(
-        labelOvr?.fontWeight,
-        Math.max(500, tokens.headingWeight - 100)
-      );
+      return `'use client';
 
-      return `import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
+import * as React from 'react';
+import { Button as ButtonPrimitive } from '@base-ui/react/button';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn, mergeClass } from '@/lib/utils';
 
-/**
- * ${tokens.brandName} (${tokens.stylePresetName}) — Customized Button Primitive
- */
-const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
+export const buttonVariants = cva(
+  [
+    'group/button relative inline-flex max-w-full shrink-0 items-center justify-center gap-2 rounded-[var(--radius)] font-[family-name:var(--font-brand)] font-medium tracking-[var(--tracking-brand)] whitespace-nowrap select-none',
+    'transition-all duration-150 ease-out outline-none',
+    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+    'active:not-disabled:scale-[0.98]',
+    'disabled:cursor-not-allowed disabled:opacity-50',
+    '[&_svg]:pointer-events-none [&_svg]:shrink-0',
+  ],
   {
     variants: {
       variant: {
-        default: "bg-[${primaryBg}] text-[${primaryFg}] hover:opacity-90",
-        brand: "bg-[${tokens.primaryColor}] text-[${getReadableTextColor(tokens.primaryColor)}] hover:opacity-90",
-        secondary: "bg-[${tokens.secondaryColor}] text-[${getReadableTextColor(tokens.secondaryColor)}] hover:opacity-90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        ghost: "hover:bg-muted hover:text-foreground",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        primary:
+          'bg-primary text-primary-foreground shadow-sm hover:opacity-90 active:opacity-95',
+        glow:
+          'bg-primary text-primary-foreground shadow-[0_0_16px_rgba(var(--primary),0.35)] hover:shadow-[0_0_24px_rgba(var(--primary),0.5)]',
+        solid:
+          'bg-foreground text-background hover:bg-foreground/90 active:bg-foreground/80',
+        secondary:
+          'bg-secondary text-secondary-foreground shadow-sm hover:opacity-90',
+        outline:
+          'border border-[length:var(--border-width,1px)] border-border bg-background text-foreground hover:bg-muted',
+        ghost:
+          'bg-transparent text-foreground hover:bg-muted',
+        destructive:
+          'bg-destructive text-destructive-foreground shadow-sm hover:opacity-90',
+        link:
+          'h-auto min-h-6 gap-1 rounded-sm bg-transparent px-0 text-primary underline-offset-4 hover:underline',
       },
       size: {
-        default: "h-[${btnHeight}px] px-5 py-2",
-        sm: "h-[${Math.max(30, btnHeight - 6)}px] px-3.5 text-xs",
-        lg: "h-[${btnHeight + 8}px] px-7 text-base",
-        icon: "h-[${btnHeight}px] w-[${btnHeight}px]",
+        sm: 'h-[var(--control-sm)] px-3 text-xs',
+        md: 'h-[var(--control-md)] px-4 text-sm',
+        lg: 'h-[var(--control-lg)] px-6 text-base',
+        'icon-sm': 'size-[var(--control-sm)] p-0',
+        icon: 'size-[var(--control-md)] p-0',
+        'icon-lg': 'size-[var(--control-lg)] p-0',
       },
     },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
+    defaultVariants: { variant: 'primary', size: 'md' },
   }
-)
+);
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean
+function Spinner({ className, size = 16 }: { className?: string; size?: number }) {
+  return (
+    <svg
+      data-slot="spinner"
+      viewBox="0 0 16 16"
+      width={size}
+      height={size}
+      fill="none"
+      aria-hidden="true"
+      className={cn('animate-spin', className)}
+    >
+      <circle cx="8" cy="8" r="6" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2" />
+      <path d="M8 2a6 6 0 0 1 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, style, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
-    return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        style={{
-          borderRadius: "${btnRadius}",
-          fontFamily: '"${brandFont}", sans-serif',
-          fontWeight: ${fontWeight},
-          letterSpacing: "${tokens.letterSpacingEm}em",
-          ...style,
-        }}
-        {...props}
-      />
-    )
-  }
-)
-Button.displayName = "Button"
+export type ButtonProps = ButtonPrimitive.Props &
+  VariantProps<typeof buttonVariants> & {
+    pending?: boolean;
+    icon?: React.ReactNode;
+  };
 
-export { Button, buttonVariants }
+export function Button({
+  className,
+  variant,
+  size,
+  pending,
+  icon,
+  disabled,
+  children: content,
+  ...props
+}: ButtonProps) {
+  const children =
+    typeof content === 'string' ? (
+      <span data-slot="button-text" className="min-w-0 truncate">
+        {content}
+      </span>
+    ) : (
+      content
+    );
+
+  return (
+    <ButtonPrimitive
+      data-slot="button"
+      data-variant={variant ?? 'primary'}
+      className={mergeClass(buttonVariants({ variant, size }), className)}
+      disabled={disabled || pending}
+      aria-busy={pending || undefined}
+      {...props}
+    >
+      {pending ? (
+        <span className="inline-flex items-center gap-2">
+          <Spinner size={14} />
+          {size?.startsWith('icon') ? null : children}
+        </span>
+      ) : (
+        <>
+          {icon}
+          {children}
+        </>
+      )}
+    </ButtonPrimitive>
+  );
+}
+`;
+    }
+
+    case 'input': {
+      return `'use client';
+
+import * as React from 'react';
+import { Input as InputPrimitive } from '@base-ui/react/input';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { mergeClass } from '@/lib/utils';
+
+export const inputVariants = cva(
+  [
+    'w-full min-w-0 rounded-[var(--radius)] border border-[length:var(--border-width,1px)] border-input bg-background px-3 text-foreground font-[family-name:var(--font-ui)]',
+    'placeholder:text-muted-foreground transition-colors outline-none',
+    'hover:not-disabled:not-aria-invalid:border-ring/50',
+    'focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20',
+    'aria-invalid:border-destructive',
+    'disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:placeholder:text-muted-foreground',
+  ],
+  {
+    variants: {
+      size: {
+        sm: 'h-[var(--control-sm)] text-xs',
+        md: 'h-[var(--control-md)] text-sm',
+        lg: 'h-[var(--control-lg)] text-base',
+      },
+    },
+    defaultVariants: { size: 'md' },
+  }
+);
+
+export type InputProps = Omit<InputPrimitive.Props, 'size'> &
+  VariantProps<typeof inputVariants>;
+
+export function Input({ className, size, type = 'text', ...props }: InputProps) {
+  return (
+    <InputPrimitive
+      data-slot="input"
+      type={type}
+      className={mergeClass(inputVariants({ size }), className)}
+      {...props}
+    />
+  );
+}
+`;
+    }
+
+    case 'dialog': {
+      return `'use client';
+
+import * as React from 'react';
+import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { X } from 'lucide-react';
+import { cn, mergeClass } from '@/lib/utils';
+import { useKoyotPortal } from '@/lib/portal';
+
+export const backdropClass = cn(
+  'fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity duration-200',
+  'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0'
+);
+
+export const dialogVariants = cva(
+  [
+    'fixed start-1/2 top-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-y-auto rounded-[calc(var(--radius)+4px)] border border-border bg-card p-6 text-card-foreground shadow-2xl outline-none duration-200',
+    'rtl:translate-x-1/2',
+    'transition-[opacity,scale] duration-200 ease-out',
+    'data-[starting-style]:scale-95 data-[starting-style]:opacity-0 data-[ending-style]:scale-95 data-[ending-style]:opacity-0',
+  ],
+  {
+    variants: {
+      size: {
+        sm: 'max-w-sm',
+        md: 'max-w-lg',
+        lg: 'max-w-2xl',
+        full: 'max-w-4xl',
+      },
+    },
+    defaultVariants: { size: 'md' },
+  }
+);
+
+export function Dialog(props: DialogPrimitive.Root.Props) {
+  return <DialogPrimitive.Root data-slot="dialog" {...props} />;
+}
+
+export function DialogTrigger(props: DialogPrimitive.Trigger.Props) {
+  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
+}
+
+export type DialogContentProps = DialogPrimitive.Popup.Props &
+  VariantProps<typeof dialogVariants> & {
+    showClose?: boolean;
+  };
+
+export function DialogContent({
+  className,
+  size,
+  showClose = true,
+  children,
+  ...props
+}: DialogContentProps) {
+  const container = useKoyotPortal();
+  return (
+    <DialogPrimitive.Portal container={container}>
+      <DialogPrimitive.Backdrop data-slot="dialog-backdrop" className={backdropClass} />
+      <DialogPrimitive.Popup
+        data-slot="dialog-content"
+        className={mergeClass(dialogVariants({ size }), className)}
+        {...props}
+      >
+        {children}
+        {showClose && (
+          <DialogPrimitive.Close
+            aria-label="Close"
+            className="absolute end-4 top-4 rounded-sm p-1 text-muted-foreground opacity-70 transition-opacity hover:opacity-100 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <X className="h-4 w-4" />
+          </DialogPrimitive.Close>
+        )}
+      </DialogPrimitive.Popup>
+    </DialogPrimitive.Portal>
+  );
+}
+
+export function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
+  return <div data-slot="dialog-header" className={cn('flex flex-col gap-1.5 pe-8', className)} {...props} />;
+}
+
+export function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
+  return <div data-slot="dialog-footer" className={cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', className)} {...props} />;
+}
+
+export function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
+  return <DialogPrimitive.Title data-slot="dialog-title" className={mergeClass('text-lg font-semibold leading-none tracking-tight font-[family-name:var(--font-brand)]', className)} {...props} />;
+}
+
+export function DialogDescription({ className, ...props }: DialogPrimitive.Description.Props) {
+  return <DialogPrimitive.Description data-slot="dialog-description" className={mergeClass('text-sm text-muted-foreground', className)} {...props} />;
+}
+
+export function DialogClose(props: DialogPrimitive.Close.Props) {
+  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
+}
 `;
     }
 
@@ -405,55 +665,30 @@ export { Button, buttonVariants }
       const meta =
         SHADCN_ALL_COMPONENTS.find((m) => m.id === primitiveId) ||
         SHADCN_ALL_COMPONENTS[0];
-      const mainPart = meta.subParts[0]?.id || 'surface';
-      const ovr = subOverrides[mainPart];
-      const radiusCss = resolveCornerRadiusCss(ovr, tokens.radiusPx);
-      const borderW = resolveBorderWidthPx(ovr?.borderWidth, tokens.borderWidth);
-      const fillHex = ovr?.fillToken
-        ? resolveSemanticColorToken(ovr.fillToken, tokens).cssColor
-        : '#FFFFFF';
       const compSymbol = meta.name.replace(/[^a-zA-Z0-9]/g, '');
 
-      return `"use client"
-
-import * as React from "react"
-import { cn } from "@/lib/utils"
-
-/**
- * ${tokens.brandName} (${tokens.stylePresetName}) — ${meta.name} Primitive
- * Synchronized with Brand Tokens:
- * - Primary: ${tokens.primaryColor}
- * - Radius: ${radiusCss}
- * - Border Width: ${borderW}px
- * - UI Font: ${uiFont}
- * - Brand Font: ${brandFont}
+      return `/**
+ * @koyot/status development (Roadmap KDS-01)
+ * Component: ${meta.name} (${primitiveId})
+ * 
+ * ⚠️ ATENÇÃO: Este componente está em desenvolvimento no roadmap de fidelidade canônica Base UI.
+ * 
+ * Conforme o relatório de auditoria e arquitetura KDS-01 / KDS-03:
+ * Componentes sem exportador canônico validado NÃO geram substitutos genéricos de <div>
+ * para não quebrar semântica, foco de teclado e acessibilidade no seu projeto consumidor.
+ * 
+ * Primitivas canônicas disponíveis na Fase 0:
+ * - Button (components/ui/button.tsx)
+ * - Input (components/ui/input.tsx)
+ * - Dialog (components/ui/dialog.tsx)
+ * - Slider (components/ui/slider.tsx)
  */
-export interface ${compSymbol}Props
-  extends React.HTMLAttributes<HTMLDivElement> {}
 
-export const ${compSymbol} = React.forwardRef<
-  HTMLDivElement,
-  ${compSymbol}Props
->(({ className, style, ...props }, ref) => {
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        "transition-all text-foreground",
-        className
-      )}
-      style={{
-        backgroundColor: "${fillHex}",
-        borderRadius: "${radiusCss}",
-        borderWidth: "${borderW}px",
-        fontFamily: '"${uiFont}", sans-serif',
-        ...style,
-      }}
-      {...props}
-    />
-  )
-})
-${compSymbol}.displayName = "${compSymbol}"
+export const ${compSymbol} = () => {
+  throw new Error(
+    "O componente '${meta.name}' está em desenvolvimento no Koyot (Fase 1 do roadmap KDS-01). Use Button, Input, Dialog ou Slider."
+  );
+};
 `;
     }
   }
@@ -536,15 +771,33 @@ export function buildShadcnRegistryItem(
   if (primitiveId === 'all') {
     const deps = new Set<string>([
       '@base-ui/react',
-      '@carbon/icons-react',
       'class-variance-authority',
       'clsx',
       'tailwind-merge',
       'lucide-react',
     ]);
-    const files = SHADCN_ALL_COMPONENTS.map((meta) => {
-      if (meta.radixPackage) deps.add(meta.radixPackage);
-      return {
+    const files: Array<{
+      path: string;
+      type: 'registry:ui' | 'registry:component';
+      target?: string;
+      content: string;
+    }> = [
+      {
+        path: 'lib/utils.ts',
+        target: 'lib/utils.ts',
+        type: 'registry:ui',
+        content: generateUtilsTsCode(),
+      },
+      {
+        path: 'lib/portal.tsx',
+        target: 'lib/portal.tsx',
+        type: 'registry:ui',
+        content: generatePortalTsxCode(),
+      },
+    ];
+
+    SHADCN_ALL_COMPONENTS.forEach((meta) => {
+      files.push({
         path: `components/ui/${meta.id}.tsx`,
         target: `components/ui/${meta.id}.tsx`,
         type: 'registry:ui' as const,
@@ -553,8 +806,9 @@ export function buildShadcnRegistryItem(
           tokens,
           allPrimitiveOverrides[meta.id] || {}
         ),
-      };
+      });
     });
+
     files.push({
       path: '.agents/skills/brand-system/SKILL.md',
       target: '.agents/skills/brand-system/SKILL.md',
@@ -568,7 +822,7 @@ export function buildShadcnRegistryItem(
       type: 'registry:ui',
       title: `${tokens.brandName} (${tokens.stylePresetName}) Koyot UI System`,
       author: 'Koyot Living Brand OS',
-      description: `Complete Koyot UI primitive collection + SKILL.md customized for ${tokens.brandName}.`,
+      description: `Canonical Base UI primitive collection (Fase 0: Button, Input, Dialog, Slider) + SKILL.md customized for ${tokens.brandName}.`,
       dependencies: Array.from(deps),
       cssVars,
       files,
@@ -586,8 +840,38 @@ export function buildShadcnRegistryItem(
     'tailwind-merge',
     'lucide-react',
   ];
-  if (meta.radixPackage) {
-    dependencies.unshift(meta.radixPackage);
+
+  const files: Array<{
+    path: string;
+    type: 'registry:ui' | 'registry:component';
+    target?: string;
+    content: string;
+  }> = [
+    {
+      path: 'lib/utils.ts',
+      target: 'lib/utils.ts',
+      type: 'registry:ui',
+      content: generateUtilsTsCode(),
+    },
+    {
+      path: `components/ui/${meta.id}.tsx`,
+      target: `components/ui/${meta.id}.tsx`,
+      type: 'registry:ui',
+      content: generatePrimitiveTsxCode(
+        meta.id,
+        tokens,
+        allPrimitiveOverrides[meta.id] || {}
+      ),
+    },
+  ];
+
+  if (meta.id === 'dialog') {
+    files.unshift({
+      path: 'lib/portal.tsx',
+      target: 'lib/portal.tsx',
+      type: 'registry:ui',
+      content: generatePortalTsxCode(),
+    });
   }
 
   return {
@@ -599,17 +883,6 @@ export function buildShadcnRegistryItem(
     description: `${meta.name} primitive synchronized with ${tokens.brandName} tokens.`,
     dependencies,
     cssVars,
-    files: [
-      {
-        path: `components/ui/${meta.id}.tsx`,
-        target: `components/ui/${meta.id}.tsx`,
-        type: 'registry:ui',
-        content: generatePrimitiveTsxCode(
-          meta.id,
-          tokens,
-          allPrimitiveOverrides[meta.id] || {}
-        ),
-      },
-    ],
+    files,
   };
 }

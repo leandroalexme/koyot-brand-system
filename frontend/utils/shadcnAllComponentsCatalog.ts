@@ -4,10 +4,13 @@ export interface ShadcnSubPartDef {
   kind: 'text' | 'surface' | 'control';
 }
 
+export type ExportStatus = 'stable' | 'development';
+
 export interface ShadcnComponentDef {
   id: string;
   name: string;
   radixPackage?: string;
+  exportStatus?: ExportStatus;
   subParts: ShadcnSubPartDef[];
 }
 
@@ -82,6 +85,7 @@ export const SHADCN_ALL_COMPONENTS: ShadcnComponentDef[] = [
   {
     id: 'button',
     name: 'Button',
+    exportStatus: 'stable',
     radixPackage: '@radix-ui/react-slot',
     subParts: [
       { id: 'button', label: 'Button', kind: 'control' },
@@ -194,6 +198,7 @@ export const SHADCN_ALL_COMPONENTS: ShadcnComponentDef[] = [
   {
     id: 'dialog',
     name: 'Dialog',
+    exportStatus: 'stable',
     radixPackage: '@radix-ui/react-dialog',
     subParts: [
       { id: 'surface', label: 'Modal', kind: 'surface' },
@@ -249,6 +254,7 @@ export const SHADCN_ALL_COMPONENTS: ShadcnComponentDef[] = [
   {
     id: 'input',
     name: 'Input',
+    exportStatus: 'stable',
     subParts: [
       { id: 'label', label: 'Label', kind: 'text' },
       { id: 'field', label: 'Field', kind: 'control' },
@@ -421,6 +427,7 @@ export const SHADCN_ALL_COMPONENTS: ShadcnComponentDef[] = [
   {
     id: 'slider',
     name: 'Slider',
+    exportStatus: 'stable',
     radixPackage: '@radix-ui/react-slider',
     subParts: [
       { id: 'label', label: 'Label', kind: 'text' },

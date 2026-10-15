@@ -193,6 +193,19 @@ export const ShadcnExportModal: React.FC<ShadcnExportModalProps> = ({
                     ? `${tokens.brandName} — Complete Shadcn Registry`
                     : `Install Personalized ${selectedMeta?.name}`}
                 </h3>
+                {selectedMeta && (
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${
+                      selectedMeta.exportStatus === 'stable'
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20'
+                        : 'bg-amber-500/15 text-amber-400 border-amber-500/20'
+                    }`}
+                  >
+                    {selectedMeta.exportStatus === 'stable'
+                      ? 'Base UI Canônico (Fase 0)'
+                      : 'Em Roadmap (Fase 1)'}
+                  </span>
+                )}
                 {registrySynced && (
                   <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-medium flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -212,12 +225,18 @@ export const ShadcnExportModal: React.FC<ShadcnExportModalProps> = ({
               onChange={(e) => onChangePrimitiveId(e.target.value as any)}
               className="h-8 px-2.5 rounded-xl bg-[#1E1E22] border border-white/10 text-xs text-white focus:outline-none cursor-pointer"
             >
-              <option value="all">All 20 Primitives (Full System)</option>
-              {SHADCN_PRIMITIVES_CATALOG.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name} ({item.id}.tsx)
-                </option>
-              ))}
+              <option value="all">
+                Full System ({SHADCN_PRIMITIVES_CATALOG.length} Primitives)
+              </option>
+              {SHADCN_PRIMITIVES_CATALOG.map((item) => {
+                const isStable = item.exportStatus === 'stable';
+                return (
+                  <option key={item.id} value={item.id}>
+                    {isStable ? '● ' : '○ '}
+                    {item.name} ({item.id}.tsx) {isStable ? '— Ready' : '— Dev'}
+                  </option>
+                );
+              })}
             </select>
 
             <button
