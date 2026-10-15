@@ -48,6 +48,7 @@ import {
 import { BrandLogoMark } from './BrandLogoMark';
 import { ProportionalArtboard } from './ProportionalArtboard';
 import { ResizableComponentFrame } from './ResizableComponentFrame';
+import { getSpecimenById } from '../../sdk/specimen';
 import {
   getReadableTextColor,
   resolveSemanticColorToken,
@@ -117,6 +118,24 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     : undefined;
 
   const renderContent = () => {
+    // 1. Dynamic SDK Specimen Auto-Discovery
+    const dynamicSpecimen = getSpecimenById(block.type);
+    if (dynamicSpecimen) {
+      const SpecimenComponent = dynamicSpecimen.render;
+      const activeVariant =
+        block.variant || dynamicSpecimen.variants?.[0] || 'Default';
+      return (
+        <SpecimenComponent
+          tokens={tokens}
+          block={block}
+          activeVariant={activeVariant}
+          isInspectMode={isInspectMode}
+          selectedTarget={selectedTarget}
+          onSelectSubElement={onSelectSubElement}
+        />
+      );
+    }
+
     if (block.type.startsWith('ui-')) {
       return (
         <ShadcnSingleComponentSpecimen

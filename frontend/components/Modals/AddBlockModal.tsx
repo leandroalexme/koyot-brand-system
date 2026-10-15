@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useBrandSystem } from '../../context/BrandSystemContext';
-import { BLOCK_CATALOG } from '../../constants';
+import { getUnifiedBlockCatalog } from '../../sdk/specimen';
 import { BlockCategory, ColumnLayout, BlockType } from '../../types';
 import {
   Search,
@@ -44,7 +44,7 @@ export const AddBlockModal: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredCatalog = useMemo(() => {
-    return BLOCK_CATALOG.filter((item) => {
+    return getUnifiedBlockCatalog().filter((item) => {
       const matchesCategory =
         selectedCategory === 'all' || item.category === selectedCategory;
       const matchesQuery =

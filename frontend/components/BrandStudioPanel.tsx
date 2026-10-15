@@ -67,6 +67,7 @@ import {
 } from 'lucide-react';
 
 import { useBrandSystem } from '../context/BrandSystemContext';
+import { getSpecimenSubElements, getSpecimenVariants } from '../sdk/specimen';
 
 interface BrandStudioPanelProps {
   tokens?: BrandTokens;
@@ -440,13 +441,15 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
             label: sp.label,
             kind: sp.kind,
           }))
-        : SUB_ELEMENTS_BY_BLOCK[selectedBlock.type] || [];
+        : SUB_ELEMENTS_BY_BLOCK[selectedBlock.type] ||
+          getSpecimenSubElements(selectedBlock.type) ||
+          [];
 
     const activeSubMeta = availableSubElements.find((s) => s.id === subId);
 
     const blockVariants = isSingleUiBlock
       ? SHADCN_BLOCK_VARIANTS[selectedBlock.type as ShadcnSingleBlockType] || []
-      : [];
+      : getSpecimenVariants(selectedBlock.type);
 
     const currentOverrides: SubElementStyleOverrides = subId
       ? selectedBlock.subElements?.[subId] || {}
