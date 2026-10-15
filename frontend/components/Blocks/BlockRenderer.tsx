@@ -413,7 +413,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         return (
           <ProportionalArtboard baseWidth={860}>
             <div
-              className="rounded-[24px] flex flex-col justify-between min-h-[320px] transition-colors duration-200"
+              className="rounded-[24px] flex flex-col justify-between w-full h-full min-h-0 flex-1 transition-colors duration-200"
               style={{
                 backgroundColor: bg,
                 color: fg,

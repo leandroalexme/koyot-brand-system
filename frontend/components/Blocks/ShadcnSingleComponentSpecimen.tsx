@@ -1848,7 +1848,7 @@ export const ShadcnSingleComponentSpecimen: React.FC<
   return (
     <div
       data-koyot-block={block.id}
-      className="rounded-[24px] min-h-[260px] h-full flex flex-col justify-between relative group/comp transition-all duration-200"
+      className="rounded-[24px] w-full h-full min-h-0 flex flex-col justify-between relative group/comp transition-all duration-200"
       style={{
         backgroundColor: cardBg,
         color: cardFg,

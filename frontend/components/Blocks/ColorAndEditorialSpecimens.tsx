@@ -114,11 +114,16 @@ export const ColorSwatchesSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
 
   return (
     <div
-      className="bg-white rounded-[24px]"
+      className="bg-white rounded-[24px] w-full h-full min-h-0 flex flex-col justify-between overflow-hidden"
       style={{ padding: `${Math.round(32 * tokens.spacingMultiplier)}px` }}
     >
+      <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-zinc-400 mb-4 shrink-0">
+        <span>Color Swatches</span>
+        <span>Click to Copy HEX</span>
+      </div>
+
       <div
-        className="grid grid-cols-2 sm:grid-cols-5"
+        className="grid grid-cols-2 sm:grid-cols-5 flex-1 min-h-0 items-stretch"
         style={{ gap: `${Math.round(16 * tokens.spacingMultiplier)}px` }}
       >
         {swatches.map((s) => {
@@ -127,11 +132,11 @@ export const ColorSwatchesSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
             <button
               key={s.name}
               onClick={() => handleCopy(s.hex)}
-              className="group text-left overflow-hidden transition-all hover:-translate-y-0.5"
+              className="group text-left overflow-hidden transition-all hover:scale-[1.02] h-full flex flex-col"
               style={{ borderRadius: `${tokens.radiusPx}px` }}
             >
               <div
-                className="h-36 p-4 flex flex-col justify-between transition-colors duration-200"
+                className="w-full h-full min-h-[140px] p-5 flex flex-col justify-between transition-colors duration-200"
                 style={{
                   backgroundColor: s.hex,
                   color: textColor,
@@ -139,11 +144,11 @@ export const ColorSwatchesSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
                 }}
               >
                 <div className="flex items-center justify-between text-xs opacity-75">
-                  <span>{s.name}</span>
+                  <span className="font-medium">{s.name}</span>
                   {copiedHex === s.hex && <Check className="w-3.5 h-3.5" />}
                 </div>
                 <div
-                  className="font-mono text-xs"
+                  className="font-mono text-xs tracking-wider"
                   style={{ fontWeight: tokens.headingWeight }}
                 >
                   {s.hex.toUpperCase()}
@@ -254,7 +259,7 @@ export const SocialCardPosterSpecimen: React.FC<SpecimenProps> = ({ tokens, bloc
 
     return (
       <div
-        className="rounded-[24px] min-h-[420px] h-full flex flex-col justify-between relative overflow-hidden transition-colors duration-200"
+        className="rounded-[24px] w-full h-full min-h-0 flex flex-col justify-between relative overflow-hidden transition-colors duration-200"
         style={{
           backgroundColor: tokens.primaryColor,
           color: fgColor,
@@ -314,7 +319,7 @@ export const SocialCardPosterSpecimen: React.FC<SpecimenProps> = ({ tokens, bloc
   const [cLine1, cLine2, cLine3] = tokens.brandCopy.socialCardHeadline;
 
   return (
-    <div className="rounded-[24px] bg-white p-8 flex items-center justify-center h-full">
+    <div className="rounded-[24px] bg-white p-8 flex items-center justify-center w-full h-full min-h-0 overflow-hidden">
       <div
         className="bg-[#FAFAFA] max-w-sm w-full space-y-5 transition-all"
         style={{
@@ -398,7 +403,7 @@ export const EditorialValuesListSpecimen: React.FC<SpecimenProps> = ({ tokens })
 
   return (
     <div
-      className="rounded-[24px] flex flex-col items-center justify-center text-center h-full min-h-[380px] transition-colors duration-200"
+      className="rounded-[24px] flex flex-col items-center justify-center text-center w-full h-full min-h-0 overflow-hidden transition-colors duration-200"
       style={{
         backgroundColor: tokens.surfaceTint,
         padding: `${Math.round(40 * tokens.spacingMultiplier)}px`,
@@ -439,7 +444,7 @@ export const LifestylePhotographySpecimen: React.FC<SpecimenProps> = ({ tokens }
   const headingFont = getFontClass(tokens.headingFont);
 
   return (
-    <div className="relative overflow-hidden rounded-[24px] min-h-[420px] h-full flex flex-col justify-between p-8 bg-zinc-900 text-white group">
+    <div className="relative overflow-hidden rounded-[24px] w-full h-full min-h-0 flex flex-col justify-between p-8 bg-zinc-900 text-white group">
       <img
         src={tokens.brandCopy.lifestyleImageUrl}
         alt={tokens.brandCopy.lifestyleCaption}

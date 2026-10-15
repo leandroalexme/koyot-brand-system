@@ -186,8 +186,8 @@ export const BezierConstructionSpecimen: React.FC<SpecimenProps> = ({ tokens }) 
   const blueprint = BEZIER_BLUEPRINTS[tokens.logoId] || BEZIER_BLUEPRINTS.poulp;
 
   return (
-    <div className="relative overflow-hidden bg-white rounded-[24px] p-8 md:p-12 transition-colors duration-300">
-      <div className="flex items-center justify-between mb-8">
+    <div className="relative overflow-hidden bg-white rounded-[24px] p-6 sm:p-8 md:p-10 w-full h-full min-h-0 flex flex-col justify-between transition-colors duration-300">
+      <div className="flex items-center justify-between mb-4 shrink-0">
         <div className="flex items-center gap-2.5">
           <BrandLogoMark logoId={tokens.logoId} color={tokens.primaryColor} size={18} />
           <span className="text-xs font-medium text-zinc-400">
@@ -203,7 +203,7 @@ export const BezierConstructionSpecimen: React.FC<SpecimenProps> = ({ tokens }) 
       </div>
 
       {/* Vector stage inside the fixed Koyot card */}
-      <div className="relative w-full h-[300px] md:h-[360px] flex items-center justify-center select-none">
+      <div className="relative w-full flex-1 min-h-0 flex items-center justify-center select-none my-auto">
         <svg
           viewBox="0 0 900 390"
           className="w-full h-full max-w-[820px] overflow-visible"
@@ -278,8 +278,8 @@ export const LogoAnatomySpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
   const tracking = getTrackingClass(tokens);
 
   return (
-    <div className="bg-white rounded-[24px] p-8 md:p-10 flex flex-col justify-between h-full">
-      <div className="flex items-center justify-between">
+    <div className="bg-white rounded-[24px] p-6 sm:p-8 md:p-10 flex flex-col justify-between w-full h-full min-h-0 overflow-hidden">
+      <div className="flex items-center justify-between shrink-0">
         <span className="text-xs font-medium text-zinc-400">
           {tokens.brandName} · Clear Space
         </span>
@@ -287,7 +287,7 @@ export const LogoAnatomySpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
       </div>
 
       {/* Inner stage: proprietary brand symbol + wordmark respond to tokens */}
-      <div className="my-12 py-16 px-8 rounded-2xl bg-[#FAFAFA] flex items-center justify-center relative">
+      <div className="my-auto py-8 px-6 rounded-2xl bg-[#FAFAFA] flex items-center justify-center relative flex-1 min-h-0">
         <div
           className="px-10 py-6 border border-dashed flex items-center gap-4 bg-white transition-all"
           style={{
@@ -360,11 +360,11 @@ export const IconographyGridSpecimen: React.FC<SpecimenProps> = ({ tokens, block
 
   return (
     <div
-      className={`rounded-[24px] p-8 md:p-12 h-full flex flex-col justify-center transition-colors ${
+      className={`rounded-[24px] p-6 sm:p-8 md:p-10 w-full h-full min-h-0 flex flex-col justify-center transition-colors overflow-hidden ${
         isDark ? 'bg-[#1C1C1E] text-white' : 'bg-white text-zinc-900'
       }`}
     >
-      <div className="grid grid-cols-3 gap-y-10 gap-x-8 py-4 place-items-center my-auto">
+      <div className="grid grid-cols-3 gap-y-8 gap-x-8 py-2 place-items-center my-auto flex-1 min-h-0">
         {icons.map((Icon, idx) => (
           <div
             key={idx}
@@ -396,7 +396,7 @@ export const DosAndDontsSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
       isDo: true,
       title: tokens.brandCopy.doRuleTitle,
       preview: (
-        <div className="h-40 rounded-2xl bg-[#FAFAFA] flex items-center justify-center p-6">
+        <div className="flex-1 min-h-[180px] rounded-2xl bg-[#FAFAFA] flex items-center justify-center p-6">
           <div
             className="px-7 py-4 flex items-center gap-3 shadow-sm transition-all"
             style={{
@@ -423,7 +423,7 @@ export const DosAndDontsSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
       isDo: false,
       title: tokens.brandCopy.dontRuleTitle,
       preview: (
-        <div className="h-40 rounded-2xl bg-[#FAFAFA] flex items-center justify-center p-6">
+        <div className="flex-1 min-h-[180px] rounded-2xl bg-[#FAFAFA] flex items-center justify-center p-6">
           <div className="flex items-center gap-3 scale-x-150 -skew-x-12 opacity-40">
             <BrandLogoMark logoId={tokens.logoId} color="#71717A" size={24} />
             <span className={`text-3xl font-bold text-zinc-500 ${headingFont}`}>
@@ -436,12 +436,12 @@ export const DosAndDontsSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
   ];
 
   return (
-    <div className="bg-white rounded-[24px] p-8 md:p-10 h-full flex flex-col justify-between">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="bg-white rounded-[24px] p-6 sm:p-8 md:p-10 w-full h-full min-h-0 flex flex-col justify-between overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1 min-h-0 my-auto items-stretch">
         {rules.map((rule, idx) => (
-          <div key={idx} className="space-y-4">
+          <div key={idx} className="flex flex-col justify-between h-full space-y-4">
             {rule.preview}
-            <div className="flex items-center gap-2.5 text-xs">
+            <div className="flex items-center gap-2.5 text-xs shrink-0">
               <span
                 className={`w-5 h-5 rounded-full flex items-center justify-center ${
                   rule.isDo

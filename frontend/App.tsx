@@ -99,21 +99,21 @@ function AppContent() {
   const getRowGridClass = (layout: ColumnLayout) => {
     switch (layout) {
       case '1-col':
-        return 'grid-cols-1 grid-rows-[minmax(0,1fr)] h-full min-h-0';
+        return 'grid-cols-1 grid-rows-1 h-full min-h-0';
       case '2-col-50-50':
-        return 'grid-cols-1 md:grid-cols-2 md:grid-rows-[minmax(0,1fr)] h-full min-h-0';
+        return 'grid-cols-1 md:grid-cols-2 grid-rows-2 md:grid-rows-1 h-full min-h-0';
       case '2-col-66-33':
-        return 'grid-cols-1 md:grid-cols-12 md:grid-rows-[minmax(0,1fr)] h-full min-h-0';
+        return 'grid-cols-1 md:grid-cols-12 grid-rows-2 md:grid-rows-1 h-full min-h-0';
       case '2-col-33-66':
-        return 'grid-cols-1 md:grid-cols-12 md:grid-rows-[minmax(0,1fr)] h-full min-h-0';
+        return 'grid-cols-1 md:grid-cols-12 grid-rows-2 md:grid-rows-1 h-full min-h-0';
       case '3-col':
-        return 'grid-cols-1 md:grid-cols-3 md:grid-rows-[minmax(0,1fr)] h-full min-h-0';
+        return 'grid-cols-1 md:grid-cols-3 grid-rows-3 md:grid-rows-1 h-full min-h-0';
       case '4-col':
-        return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-[minmax(0,1fr)] h-full min-h-0';
+        return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4 grid-rows-4 sm:grid-rows-2 md:grid-rows-1 h-full min-h-0';
       case '2x2':
-        return 'grid-cols-1 md:grid-cols-2 grid-rows-2 md:grid-rows-[repeat(2,minmax(0,1fr))] h-full min-h-0';
+        return 'grid-cols-1 md:grid-cols-2 grid-rows-4 md:grid-rows-2 h-full min-h-0';
       default:
-        return 'grid-cols-1 grid-rows-[minmax(0,1fr)] h-full min-h-0';
+        return 'grid-cols-1 grid-rows-1 h-full min-h-0';
     }
   };
 

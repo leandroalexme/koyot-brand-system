@@ -1404,9 +1404,9 @@ export const ShadcnPrimitivesWorkbench: React.FC<
     const isTwoCol = containerWidth >= 540;
 
     return (
-      <div className={`space-y-4 ${bodyFont}`}>
+      <div className={`w-full h-full min-h-0 flex flex-col gap-4 ${bodyFont}`}>
         {/* TOP FULL CARD: Default State */}
-        <div className="bg-white rounded-[24px] p-6 sm:p-8 min-h-[260px] flex flex-col justify-between relative group/card">
+        <div className="bg-white rounded-[24px] p-6 sm:p-8 flex-1 min-h-0 flex flex-col justify-between relative group/card">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-zinc-800">Default</span>
             <button
@@ -1422,7 +1422,7 @@ export const ShadcnPrimitivesWorkbench: React.FC<
             </button>
           </div>
 
-          <div className="my-auto py-8">
+          <div className="my-auto py-6 sm:py-8">
             {renderComponentInstance(selectedMeta, 'Default', true)}
           </div>
 
@@ -1433,19 +1433,19 @@ export const ShadcnPrimitivesWorkbench: React.FC<
         <div
           className={`grid ${
             isTwoCol ? 'grid-cols-2' : 'grid-cols-1'
-          } gap-4`}
+          } gap-4 flex-1 min-h-0`}
         >
-          <div className="bg-white rounded-[24px] p-6 sm:p-7 min-h-[220px] flex flex-col justify-between relative group/card">
+          <div className="bg-white rounded-[24px] p-6 sm:p-7 h-full min-h-0 flex flex-col justify-between relative group/card">
             <div className="flex items-center justify-between">
               <span className="text-xs text-zinc-400">Disabled</span>
             </div>
-            <div className="my-auto py-6">
+            <div className="my-auto py-4 sm:py-6">
               {renderComponentInstance(selectedMeta, 'Disabled', false)}
             </div>
             <div />
           </div>
 
-          <div className="bg-white rounded-[24px] p-6 sm:p-7 min-h-[220px] flex flex-col justify-between relative group/card">
+          <div className="bg-white rounded-[24px] p-6 sm:p-7 h-full min-h-0 flex flex-col justify-between relative group/card">
             <div className="flex items-center justify-between">
               <span className="text-xs text-zinc-400">Hover</span>
               <button
@@ -1460,7 +1460,7 @@ export const ShadcnPrimitivesWorkbench: React.FC<
                 <Copy className="w-3.5 h-3.5" />
               </button>
             </div>
-            <div className="my-auto py-6">
+            <div className="my-auto py-4 sm:py-6">
               {renderComponentInstance(selectedMeta, 'Hover', true)}
             </div>
             <div />
@@ -1479,13 +1479,13 @@ export const ShadcnPrimitivesWorkbench: React.FC<
     <div
       className={`grid ${
         isTwoColGrid ? 'grid-cols-2' : 'grid-cols-1'
-      } gap-5 ${bodyFont}`}
+      } gap-5 w-full h-full min-h-0 ${bodyFont}`}
     >
       {SHADCN_ALL_COMPONENTS.map((meta) => (
         <div
           key={meta.id}
           onClick={() => onSelectComponentId?.(meta.id)}
-          className="bg-white rounded-[24px] p-7 min-h-[250px] flex flex-col justify-between group cursor-pointer hover:shadow-sm transition"
+          className="bg-white rounded-[24px] p-7 w-full h-full min-h-[160px] flex flex-col justify-between group cursor-pointer hover:shadow-sm transition"
         >
           <div className="flex items-center justify-between">
             <span className="text-xs text-zinc-500 group-hover:text-zinc-900 transition">

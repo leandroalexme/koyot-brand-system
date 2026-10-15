@@ -162,42 +162,44 @@ export const TypographyAlphabetSpecimen: React.FC<SpecimenProps> = ({ tokens }) 
 
   return (
     <div
-      className="bg-white rounded-[24px]"
+      className="bg-white rounded-[24px] w-full h-full min-h-0 flex flex-col justify-between overflow-hidden"
       style={{ padding: `${Math.round(36 * tokens.spacingMultiplier)}px` }}
     >
       <div
-        className="flex items-center justify-between text-xs text-zinc-400 mb-6"
+        className="flex items-center justify-between text-xs text-zinc-400 mb-4 shrink-0"
         style={{ fontWeight: tokens.bodyWeight }}
       >
-        <span>Alphabet</span>
+        <span>Alphabet Matrix</span>
         <span>{tokens.headingFont}</span>
       </div>
 
-      <div className="grid grid-cols-11 border-t border-l border-zinc-100">
-        {glyphs.map((g, i) => {
-          const isSelected = activeGlyph === g;
-          return (
-            <button
-              key={i}
-              onClick={() => setActiveGlyph(g)}
-              className={`aspect-square border-r border-b border-zinc-100 flex items-center justify-center transition ${headingFont} ${
-                isSelected ? 'text-white' : 'text-zinc-800 hover:bg-zinc-50'
-              }`}
-              style={{
-                fontSize: `${Math.round(17 * tokens.fontScale)}px`,
-                fontWeight: isSelected ? tokens.headingWeight : tokens.bodyWeight,
-                ...(isSelected
-                  ? {
-                      backgroundColor: tokens.primaryColor,
-                      borderRadius: `${Math.min(tokens.radiusPx, 12)}px`,
-                    }
-                  : {}),
-              }}
-            >
-              {g}
-            </button>
-          );
-        })}
+      <div className="flex-1 min-h-0 flex items-center justify-center my-auto">
+        <div className="grid grid-cols-11 border-t border-l border-zinc-100 w-full max-w-2xl">
+          {glyphs.map((g, i) => {
+            const isSelected = activeGlyph === g;
+            return (
+              <button
+                key={i}
+                onClick={() => setActiveGlyph(g)}
+                className={`aspect-square border-r border-b border-zinc-100 flex items-center justify-center transition ${headingFont} ${
+                  isSelected ? 'text-white' : 'text-zinc-800 hover:bg-zinc-50'
+                }`}
+                style={{
+                  fontSize: `${Math.round(17 * tokens.fontScale)}px`,
+                  fontWeight: isSelected ? tokens.headingWeight : tokens.bodyWeight,
+                  ...(isSelected
+                    ? {
+                        backgroundColor: tokens.primaryColor,
+                        borderRadius: `${Math.min(tokens.radiusPx, 12)}px`,
+                      }
+                    : {}),
+                }}
+              >
+                {g}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -216,10 +218,18 @@ export const TypographyHierarchySpecimen: React.FC<SpecimenProps> = ({ tokens })
 
   return (
     <div
-      className="bg-white rounded-[24px]"
+      className="bg-white rounded-[24px] w-full h-full min-h-0 flex flex-col justify-between overflow-hidden"
       style={{ padding: `${Math.round(36 * tokens.spacingMultiplier)}px` }}
     >
-      <div className="divide-y divide-zinc-100">
+      <div
+        className="flex items-center justify-between text-xs text-zinc-400 mb-4 shrink-0"
+        style={{ fontWeight: tokens.bodyWeight }}
+      >
+        <span>Type Hierarchy</span>
+        <span>{tokens.brandName} Specs</span>
+      </div>
+
+      <div className="flex-1 min-h-0 flex flex-col justify-between divide-y divide-zinc-100 my-auto">
         {scales.map((item) => {
           const computedPx = Math.round(item.basePx * tokens.fontScale);
           const computedWeight = item.isBody
@@ -229,11 +239,7 @@ export const TypographyHierarchySpecimen: React.FC<SpecimenProps> = ({ tokens })
           return (
             <div
               key={item.role}
-              className="first:pt-0 last:pb-0 grid grid-cols-12 gap-4 items-baseline"
-              style={{
-                paddingTop: `${Math.round(20 * tokens.spacingMultiplier)}px`,
-                paddingBottom: `${Math.round(20 * tokens.spacingMultiplier)}px`,
-              }}
+              className="py-4 first:pt-0 last:pb-0 grid grid-cols-12 gap-4 items-baseline"
             >
               <div
                 className="col-span-3 flex items-center gap-3 text-xs text-zinc-400"

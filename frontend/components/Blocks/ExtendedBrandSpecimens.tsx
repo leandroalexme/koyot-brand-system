@@ -46,10 +46,10 @@ export const LogotypeScalingSpecimen: React.FC<SpecimenProps> = ({ tokens }) => 
 
   return (
     <div
-      className="bg-white rounded-[24px] flex flex-col justify-between h-full"
-      style={{ padding: `${Math.round(36 * tokens.spacingMultiplier)}px` }}
+      className="bg-white rounded-[24px] flex flex-col justify-between w-full h-full min-h-0 overflow-hidden"
+      style={{ padding: `${Math.round(32 * tokens.spacingMultiplier)}px` }}
     >
-      <div className="flex items-center gap-2 pb-5 border-b border-zinc-100">
+      <div className="flex items-center gap-2 pb-4 border-b border-zinc-100 shrink-0">
         <span
           className="w-2 h-2 rounded-full"
           style={{ backgroundColor: tokens.primaryColor }}
@@ -57,13 +57,13 @@ export const LogotypeScalingSpecimen: React.FC<SpecimenProps> = ({ tokens }) => 
         <span className="text-xs text-zinc-400">Logotype scaling</span>
       </div>
 
-      <div className="divide-y divide-zinc-100">
+      <div className="divide-y divide-zinc-100 flex-1 min-h-0 flex flex-col justify-between my-auto">
         {steps.map((step, idx) => {
           const scaledFontPx = Math.round(step.sizePx * tokens.fontScale);
           return (
             <div
               key={idx}
-              className="flex items-baseline justify-between gap-4 py-5 first:pt-6 last:pb-1"
+              className="flex items-baseline justify-between gap-4 py-3 first:pt-2 last:pb-0"
             >
               <div
                 className={`leading-[0.9] select-none whitespace-nowrap ${headingFont}`}
@@ -98,7 +98,7 @@ export const BrandLockupMatrixSpecimen: React.FC<SpecimenProps> = ({ tokens }) =
   const shortBrand = tokens.brandName.split(' ')[0];
 
   return (
-    <div className="bg-white rounded-[24px] overflow-hidden grid grid-cols-12 min-h-[440px] h-full">
+    <div className="bg-white rounded-[24px] overflow-hidden grid grid-cols-12 w-full h-full min-h-0">
       {/* Left 6 columns: 2x2 + Bottom Horizontal Lockup */}
       <div className="col-span-6 grid grid-rows-2">
         <div className="grid grid-cols-2">
@@ -205,7 +205,7 @@ export const IconGridInspectorSpecimen: React.FC<SpecimenProps> = ({ tokens }) =
   return (
     <div
       onClick={() => setActiveIdx((activeIdx + 1) % items.length)}
-      className="bg-white rounded-[24px] flex flex-col justify-between min-h-[420px] h-full cursor-pointer select-none"
+      className="bg-white rounded-[24px] flex flex-col justify-between w-full h-full min-h-0 overflow-hidden cursor-pointer select-none"
       style={{ padding: `${Math.round(32 * tokens.spacingMultiplier)}px` }}
     >
       {/* Minimalist Top Bar */}
@@ -298,7 +298,7 @@ export const MotionIconMorphSpecimen: React.FC<SpecimenProps> = ({ tokens }) => 
   return (
     <div
       onClick={() => setStage(((stage + 1) % 3) as 0 | 1 | 2)}
-      className="rounded-[24px] p-10 min-h-[420px] h-full flex flex-col items-center justify-center relative overflow-hidden cursor-pointer select-none transition-colors duration-300"
+      className="rounded-[24px] p-6 sm:p-10 w-full h-full min-h-0 flex flex-col items-center justify-center relative overflow-hidden cursor-pointer select-none transition-colors duration-300"
       style={{ backgroundColor: tokens.darkSurface, color: '#FFFFFF' }}
     >
       <div
@@ -380,15 +380,15 @@ export const StylisticSetSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
 
   return (
     <div
-      className="rounded-[24px] space-y-6 transition-colors duration-200"
+      className="rounded-[24px] w-full h-full min-h-0 overflow-hidden flex flex-col justify-between transition-colors duration-200"
       style={{
         backgroundColor: tokens.surfaceTint,
         color: '#18181B',
-        padding: `${Math.round(36 * tokens.spacingMultiplier)}px`,
+        padding: `${Math.round(32 * tokens.spacingMultiplier)}px`,
       }}
     >
       {/* Top Section: Side-by-side Glyph Alternates */}
-      <div className="grid grid-cols-2 gap-8 border-t border-zinc-900/20 pt-2">
+      <div className="grid grid-cols-2 gap-8 border-t border-zinc-900/20 pt-2 shrink-0">
         <div>
           <div className="flex items-center justify-between text-[11px] text-zinc-500 mb-2">
             <span>Font: {tokens.headingFont}</span>
@@ -397,7 +397,7 @@ export const StylisticSetSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
           <div
             className={`leading-[0.86] select-none ${headingFont}`}
             style={{
-              fontSize: `${Math.round(168 * tokens.fontScale)}px`,
+              fontSize: `${Math.round(144 * tokens.fontScale)}px`,
               fontWeight: tokens.headingWeight,
               letterSpacing: `${tokens.letterSpacingEm}em`,
             }}
@@ -414,7 +414,7 @@ export const StylisticSetSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
           <div
             className={`leading-[0.86] select-none italic ${headingFont}`}
             style={{
-              fontSize: `${Math.round(168 * tokens.fontScale)}px`,
+              fontSize: `${Math.round(144 * tokens.fontScale)}px`,
               fontWeight: tokens.headingWeight,
               letterSpacing: `${tokens.letterSpacingEm}em`,
               color: tokens.primaryColor,
@@ -426,7 +426,7 @@ export const StylisticSetSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
       </div>
 
       {/* Middle Section: Display Word */}
-      <div className="border-t border-zinc-900/20 pt-2">
+      <div className="border-t border-zinc-900/20 pt-2 my-auto">
         <div className="flex items-center justify-between text-[11px] text-zinc-500 mb-2">
           <span>Alternative Ligatures (ss09)</span>
           <span>Font: {tokens.headingFont} · SemiBold</span>
@@ -434,7 +434,7 @@ export const StylisticSetSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
         <div
           className={`leading-[0.94] select-none whitespace-nowrap ${headingFont}`}
           style={{
-            fontSize: `${Math.round(88 * tokens.fontScale)}px`,
+            fontSize: `${Math.round(76 * tokens.fontScale)}px`,
             fontWeight: Math.max(500, tokens.headingWeight - 100),
             letterSpacing: `${tokens.letterSpacingEm}em`,
           }}
@@ -444,15 +444,15 @@ export const StylisticSetSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
       </div>
 
       {/* Bottom Section: Editorial Paragraph */}
-      <div className="border-t border-zinc-900/20 pt-2">
-        <div className="flex items-center justify-between text-[11px] text-zinc-500 mb-3">
+      <div className="border-t border-zinc-900/20 pt-2 shrink-0">
+        <div className="flex items-center justify-between text-[11px] text-zinc-500 mb-2">
           <span>Font: {tokens.bodyFont}</span>
           <span>Style: Medium</span>
         </div>
         <p
           className={`leading-[1.26] text-zinc-900 ${bodyFont}`}
           style={{
-            fontSize: `${Math.round(21 * tokens.fontScale)}px`,
+            fontSize: `${Math.round(18 * tokens.fontScale)}px`,
             fontWeight: tokens.bodyWeight,
           }}
         >
@@ -471,11 +471,11 @@ export const TypeTriptychPosterSpecimen: React.FC<SpecimenProps> = ({ tokens }) 
   const bodyFont = getFontClass(tokens.bodyFont);
 
   return (
-    <div className="bg-white rounded-[24px] p-6">
-      <div className="grid grid-cols-3 gap-5">
+    <div className="bg-white rounded-[24px] p-6 w-full h-full min-h-0 flex flex-col overflow-hidden">
+      <div className="grid grid-cols-3 gap-5 flex-1 min-h-0 h-full">
         {/* Poster 1: Numerals & Percentages on Secondary */}
         <div
-          className="p-6 h-[380px] flex flex-col justify-between overflow-hidden transition-all"
+          className="p-6 h-full flex flex-col justify-between overflow-hidden transition-all"
           style={{
             backgroundColor: tokens.secondaryColor,
             color: getReadableTextColor(tokens.secondaryColor),
@@ -488,9 +488,9 @@ export const TypeTriptychPosterSpecimen: React.FC<SpecimenProps> = ({ tokens }) 
           </div>
 
           <div
-            className={`leading-[0.88] select-none ${headingFont}`}
+            className={`leading-[0.88] select-none my-auto ${headingFont}`}
             style={{
-              fontSize: `${Math.round(92 * tokens.fontScale)}px`,
+              fontSize: `${Math.round(86 * tokens.fontScale)}px`,
               fontWeight: tokens.headingWeight,
               letterSpacing: `${tokens.letterSpacingEm}em`,
             }}
@@ -502,7 +502,7 @@ export const TypeTriptychPosterSpecimen: React.FC<SpecimenProps> = ({ tokens }) 
 
         {/* Poster 2: Currency & Ligatures on Surface Tint */}
         <div
-          className="p-6 h-[380px] flex flex-col justify-between overflow-hidden transition-all"
+          className="p-6 h-full flex flex-col justify-between overflow-hidden transition-all"
           style={{
             backgroundColor: tokens.surfaceTint,
             color: '#18181B',
@@ -517,7 +517,7 @@ export const TypeTriptychPosterSpecimen: React.FC<SpecimenProps> = ({ tokens }) 
           <div
             className={`leading-none text-center my-auto select-none ${headingFont}`}
             style={{
-              fontSize: `${Math.round(124 * tokens.fontScale)}px`,
+              fontSize: `${Math.round(110 * tokens.fontScale)}px`,
               fontWeight: tokens.headingWeight,
             }}
           >
@@ -530,7 +530,7 @@ export const TypeTriptychPosterSpecimen: React.FC<SpecimenProps> = ({ tokens }) 
               <span>Medium</span>
               <span className="font-bold text-zinc-900">Bold</span>
             </div>
-            <p className={`text-[10px] leading-snug text-zinc-800 ${bodyFont}`}>
+            <p className={`text-[10px] leading-snug text-zinc-800 line-clamp-2 ${bodyFont}`}>
               Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz 1234567890
             </p>
           </div>
@@ -538,7 +538,7 @@ export const TypeTriptychPosterSpecimen: React.FC<SpecimenProps> = ({ tokens }) 
 
         {/* Poster 3: Expressive Punctuation on Primary */}
         <div
-          className="p-6 h-[380px] flex flex-col justify-between overflow-hidden transition-all"
+          className="p-6 h-full flex flex-col justify-between overflow-hidden transition-all"
           style={{
             backgroundColor: tokens.primaryColor,
             color: tokens.secondaryColor,
@@ -586,14 +586,19 @@ export const TypeScaleSheetSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
 
   return (
     <div
-      className="rounded-[24px] overflow-hidden transition-colors duration-200 h-full flex flex-col justify-center"
+      className="rounded-[24px] w-full h-full min-h-0 overflow-hidden transition-colors duration-200 flex flex-col justify-between"
       style={{
         backgroundColor: tokens.accentColor,
         color: fgAccent,
-        padding: `${Math.round(32 * tokens.spacingMultiplier)}px`,
+        padding: `${Math.round(28 * tokens.spacingMultiplier)}px`,
       }}
     >
-      <div className="divide-y divide-current/15 border-t border-b border-current/15">
+      <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest opacity-70 mb-2 shrink-0">
+        <span>Type Scale Ladder</span>
+        <span>H1 — D1 Metrics</span>
+      </div>
+
+      <div className="divide-y divide-current/15 border-t border-b border-current/15 flex-1 min-h-0 flex flex-col justify-between my-auto">
         {rows.map((r) => {
           const computedSize = Math.round(r.samplePx * tokens.fontScale);
           return (
@@ -646,18 +651,18 @@ export const LayoutGridSystemSpecimen: React.FC<SpecimenProps> = ({ tokens }) =>
     <div
       onClick={cycleGrid}
       title="Click to cycle layout grid proportions"
-      className="rounded-[24px] p-10 cursor-pointer select-none transition-colors duration-300"
+      className="rounded-[24px] p-6 sm:p-10 cursor-pointer select-none transition-colors duration-300 w-full h-full min-h-0 flex flex-col justify-center overflow-hidden"
       style={{ backgroundColor: tokens.darkSurface }}
     >
       <div
-        className="text-zinc-950 transition-all duration-500 overflow-hidden"
+        className="text-zinc-950 transition-all duration-500 overflow-hidden flex-1 w-full min-h-0 flex flex-col justify-center"
         style={{
           backgroundColor: tokens.surfaceTint,
           borderRadius: `${Math.min(tokens.radiusPx, 16)}px`,
         }}
       >
         {gridMode === 'poster' && (
-          <div className="max-w-sm mx-auto min-h-[320px] flex flex-col justify-between border-x border-zinc-900/15 p-8">
+          <div className="max-w-sm mx-auto h-full flex flex-col justify-between border-x border-zinc-900/15 p-6 flex-1 min-h-0">
             <h3
               className={`leading-[0.94] ${headingFont}`}
               style={{
@@ -671,7 +676,7 @@ export const LayoutGridSystemSpecimen: React.FC<SpecimenProps> = ({ tokens }) =>
               <div>{g3}</div>
             </h3>
 
-            <div className="pt-12 flex items-end justify-between text-[10px] border-t border-zinc-900/20 mt-8">
+            <div className="pt-8 flex items-end justify-between text-[10px] border-t border-zinc-900/20 mt-4">
               <div className="flex items-center gap-1.5 font-bold">
                 <BrandLogoMark logoId={tokens.logoId} color="#09090B" size={16} />
                 <span>{tokens.brandName.toLowerCase()}</span>
@@ -682,7 +687,7 @@ export const LayoutGridSystemSpecimen: React.FC<SpecimenProps> = ({ tokens }) =>
         )}
 
         {gridMode === 'split' && (
-          <div className="grid grid-cols-12 min-h-[320px]">
+          <div className="grid grid-cols-12 h-full flex-1 min-h-0">
             <div className="col-span-7 p-8 flex flex-col justify-between border-r border-zinc-900/20">
               <h3
                 className={`leading-[0.94] ${headingFont}`}
@@ -727,7 +732,7 @@ export const LayoutGridSystemSpecimen: React.FC<SpecimenProps> = ({ tokens }) =>
         )}
 
         {gridMode === 'triptych' && (
-          <div className="grid grid-cols-12 min-h-[320px]">
+          <div className="grid grid-cols-12 flex-1 w-full h-full min-h-0">
             <div className="col-span-4 p-6 flex flex-col justify-between border-r border-zinc-900/20">
               <h3
                 className={`leading-[0.95] ${headingFont}`}
@@ -749,7 +754,7 @@ export const LayoutGridSystemSpecimen: React.FC<SpecimenProps> = ({ tokens }) =>
 
             <div className="col-span-4 p-5 border-r border-zinc-900/20 flex items-center justify-center">
               <div
-                className="relative w-full h-full min-h-[220px] border border-zinc-900/25"
+                className="relative w-full h-full min-h-[140px] border border-zinc-900/25"
                 style={{ backgroundColor: `${tokens.primaryColor}22` }}
               >
                 <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full">
@@ -794,13 +799,13 @@ export const IosHomescreenMockupSpecimen: React.FC<SpecimenProps> = ({ tokens })
 
   return (
     <div
-      className="rounded-[24px] pt-10 pl-10 overflow-hidden min-h-[420px] h-full flex items-end justify-end transition-colors duration-300"
+      className="rounded-[24px] pt-6 pl-6 sm:pt-8 sm:pl-8 overflow-hidden w-full h-full min-h-0 flex items-end justify-end transition-colors duration-300"
       style={{ backgroundColor: tokens.secondaryColor }}
     >
       {/* Macro iPhone Top-Left Bezel */}
-      <div className="w-full h-full bg-[#18181B] rounded-tl-[64px] pt-5 pl-5 shadow-2xl">
+      <div className="w-full h-full bg-[#18181B] rounded-tl-[48px] sm:rounded-tl-[64px] pt-4 pl-4 sm:pt-5 sm:pl-5 shadow-2xl flex flex-col">
         <div
-          className="w-full h-full rounded-tl-[48px] pt-6 pl-8 pr-6 pb-8 relative overflow-hidden flex flex-col justify-between transition-colors duration-300"
+          className="w-full flex-1 rounded-tl-[36px] sm:rounded-tl-[48px] pt-5 pl-6 pr-5 pb-6 sm:pt-6 sm:pl-8 sm:pr-6 sm:pb-8 relative overflow-hidden flex flex-col justify-between transition-colors duration-300"
           style={{
             backgroundColor: tokens.surfaceTint,
             color: '#09090B',
@@ -808,18 +813,18 @@ export const IosHomescreenMockupSpecimen: React.FC<SpecimenProps> = ({ tokens })
         >
           {/* Top Notch & 9:41 Status Bar */}
           <div className="flex items-center justify-between">
-            <span className="text-xl font-semibold text-zinc-950 tracking-tight pl-4">
+            <span className="text-lg sm:text-xl font-semibold text-zinc-950 tracking-tight pl-2 sm:pl-4">
               9:41
             </span>
-            <div className="w-36 h-9 bg-[#18181B] rounded-b-3xl -mt-6 -mr-6" />
+            <div className="w-28 sm:w-36 h-8 sm:h-9 bg-[#18181B] rounded-b-3xl -mt-5 sm:-mt-6 -mr-5 sm:-mr-6" />
           </div>
 
           {/* App Icons Grid */}
-          <div className="grid grid-cols-2 gap-x-8 gap-y-8 my-auto pl-4">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:gap-x-8 sm:gap-y-8 my-auto pl-2 sm:pl-4">
             {/* Primary Brand App Icon */}
             <div className="flex flex-col items-center gap-2">
               <div
-                className="w-24 h-24 bg-white shadow-md flex items-center justify-center transition-transform duration-300 hover:scale-105"
+                className="w-20 h-20 sm:w-24 sm:h-24 bg-white shadow-md flex items-center justify-center transition-transform duration-300 hover:scale-105"
                 style={{
                   borderRadius: `${Math.max(16, Math.min(26, tokens.radiusPx * 1.4))}px`,
                 }}
@@ -827,7 +832,7 @@ export const IosHomescreenMockupSpecimen: React.FC<SpecimenProps> = ({ tokens })
                 <BrandLogoMark
                   logoId={tokens.logoId}
                   color={tokens.primaryColor}
-                  size={46}
+                  size={40}
                 />
               </div>
               <span className={`text-xs font-medium text-zinc-900 ${headingFont}`}>
@@ -838,7 +843,7 @@ export const IosHomescreenMockupSpecimen: React.FC<SpecimenProps> = ({ tokens })
             {/* Companion Ecosystem Icon */}
             <div className="flex flex-col items-center gap-2">
               <div
-                className="w-24 h-24 shadow-md flex items-center justify-center"
+                className="w-20 h-20 sm:w-24 sm:h-24 shadow-md flex items-center justify-center"
                 style={{
                   backgroundColor: tokens.primaryColor,
                   borderRadius: `${Math.max(16, Math.min(26, tokens.radiusPx * 1.4))}px`,
@@ -847,7 +852,7 @@ export const IosHomescreenMockupSpecimen: React.FC<SpecimenProps> = ({ tokens })
                 <BrandLogoMark
                   logoId={tokens.logoId}
                   color={getReadableTextColor(tokens.primaryColor)}
-                  size={42}
+                  size={36}
                 />
               </div>
               <span className={`text-xs font-medium text-zinc-900 ${headingFont}`}>
@@ -870,31 +875,31 @@ export const BrowserFaviconMockupSpecimen: React.FC<SpecimenProps> = ({ tokens }
 
   return (
     <div
-      className="rounded-[24px] pt-10 pl-10 overflow-hidden min-h-[420px] h-full flex flex-col justify-end transition-colors duration-300"
+      className="rounded-[24px] pt-6 pl-6 sm:pt-8 sm:pl-8 overflow-hidden w-full h-full min-h-0 flex flex-col justify-end transition-colors duration-300"
       style={{ backgroundColor: tokens.darkSurface }}
     >
-      <div className="bg-[#E4E4E7] rounded-tl-[28px] overflow-hidden shadow-2xl flex-1 flex flex-col">
+      <div className="bg-[#E4E4E7] rounded-tl-[28px] overflow-hidden shadow-2xl flex-1 flex flex-col min-h-0">
         {/* Top Browser Tab Strip */}
-        <div className="pt-4 pl-6 flex items-end gap-5">
-          <div className="flex items-center gap-2.5 pb-3.5">
-            <span className="w-3.5 h-3.5 rounded-full bg-zinc-400" />
-            <span className="w-3.5 h-3.5 rounded-full bg-zinc-400" />
-            <span className="w-3.5 h-3.5 rounded-full bg-zinc-400" />
+        <div className="pt-3.5 pl-5 flex items-end gap-4 sm:gap-5">
+          <div className="flex items-center gap-2 pb-3">
+            <span className="w-3 h-3 rounded-full bg-zinc-400" />
+            <span className="w-3 h-3 rounded-full bg-zinc-400" />
+            <span className="w-3 h-3 rounded-full bg-zinc-400" />
           </div>
 
           {/* Active Browser Tab */}
-          <div className="bg-white rounded-t-2xl px-5 py-3 flex items-center gap-3 flex-1 shadow-sm">
+          <div className="bg-white rounded-t-2xl px-4 py-2.5 sm:px-5 sm:py-3 flex items-center gap-2.5 sm:gap-3 flex-1 shadow-sm">
             <div
-              className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200"
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200"
               style={{
                 backgroundColor: tokens.accentColor,
                 color: fgAccent,
               }}
             >
-              <BrandLogoMark logoId={tokens.logoId} color={fgAccent} size={16} />
+              <BrandLogoMark logoId={tokens.logoId} color={fgAccent} size={15} />
             </div>
             <span
-              className={`text-sm font-medium text-zinc-900 whitespace-nowrap ${headingFont}`}
+              className={`text-xs sm:text-sm font-medium text-zinc-900 whitespace-nowrap truncate ${headingFont}`}
             >
               {tokens.brandName}
             </span>
@@ -902,19 +907,19 @@ export const BrowserFaviconMockupSpecimen: React.FC<SpecimenProps> = ({ tokens }
         </div>
 
         {/* Browser Address Bar */}
-        <div className="bg-white px-6 py-3 flex items-center gap-4 border-b border-zinc-100">
-          <ArrowLeft className="w-4 h-4 text-zinc-600" />
-          <ArrowRight className="w-4 h-4 text-zinc-300" />
-          <RotateCw className="w-4 h-4 text-zinc-600" />
+        <div className="bg-white px-5 py-2.5 flex items-center gap-3 sm:gap-4 border-b border-zinc-100">
+          <ArrowLeft className="w-3.5 h-3.5 text-zinc-600" />
+          <ArrowRight className="w-3.5 h-3.5 text-zinc-300" />
+          <RotateCw className="w-3.5 h-3.5 text-zinc-600" />
 
-          <div className="flex-1 bg-[#F4F4F5] rounded-full px-4 py-1.5 flex items-center gap-2 text-xs text-zinc-600">
-            <Lock className="w-3.5 h-3.5 text-zinc-400" />
-            <span className="font-mono">{tokens.brandCopy.domainUrl}</span>
+          <div className="flex-1 bg-[#F4F4F5] rounded-full px-3.5 py-1.5 flex items-center gap-2 text-[11px] sm:text-xs text-zinc-600 truncate">
+            <Lock className="w-3 h-3 text-zinc-400 shrink-0" />
+            <span className="font-mono truncate">{tokens.brandCopy.domainUrl}</span>
           </div>
         </div>
 
         {/* Website Hero Peek */}
-        <div className="relative flex-1 bg-zinc-900 overflow-hidden">
+        <div className="relative flex-1 bg-zinc-900 overflow-hidden min-h-0">
           <img
             src={tokens.brandCopy.lifestyleImageUrl}
             alt={tokens.brandName}
@@ -941,11 +946,11 @@ export const SocialProfileMockupSpecimen: React.FC<SpecimenProps> = ({
   if (block.theme === 'brand') {
     return (
       <div
-        className="rounded-[24px] p-10 min-h-[420px] h-full flex items-center justify-center transition-colors duration-200"
+        className="rounded-[24px] p-6 sm:p-8 w-full h-full min-h-0 flex items-center justify-center transition-colors duration-200"
         style={{ backgroundColor: tokens.primaryColor }}
       >
         <div
-          className="bg-white p-7 shadow-2xl w-full flex items-center justify-between gap-6"
+          className="bg-white p-6 sm:p-7 shadow-2xl w-full flex items-center justify-between gap-4 sm:gap-6"
           style={{ borderRadius: `${tokens.radiusPx}px` }}
         >
           <div
@@ -954,26 +959,26 @@ export const SocialProfileMockupSpecimen: React.FC<SpecimenProps> = ({
               background: `linear-gradient(135deg, ${tokens.primaryColor}, ${tokens.supportColor}, ${tokens.accentColor})`,
             }}
           >
-            <div className="w-20 h-20 rounded-full bg-zinc-950 text-white flex flex-col items-center justify-center p-2 border-2 border-white">
-              <BrandLogoMark logoId={tokens.logoId} color="#FFFFFF" size={24} />
-              <span className={`text-[10px] font-bold mt-1 ${headingFont}`}>
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-zinc-950 text-white flex flex-col items-center justify-center p-2 border-2 border-white">
+              <BrandLogoMark logoId={tokens.logoId} color="#FFFFFF" size={22} />
+              <span className={`text-[9px] sm:text-[10px] font-bold mt-1 ${headingFont}`}>
                 {shortBrand}
               </span>
             </div>
           </div>
 
-          <div className={`grid grid-cols-3 gap-4 flex-1 text-center ${bodyFont}`}>
+          <div className={`grid grid-cols-3 gap-3 sm:gap-4 flex-1 text-center ${bodyFont}`}>
             <div>
-              <div className="text-sm font-bold text-zinc-950">1,234</div>
-              <div className="text-[11px] text-zinc-500">Posts</div>
+              <div className="text-sm sm:text-base font-bold text-zinc-950">1,234</div>
+              <div className="text-[10px] sm:text-[11px] text-zinc-500">Posts</div>
             </div>
             <div>
-              <div className="text-sm font-bold text-zinc-950">84.2K</div>
-              <div className="text-[11px] text-zinc-500">Followers</div>
+              <div className="text-sm sm:text-base font-bold text-zinc-950">84.2K</div>
+              <div className="text-[10px] sm:text-[11px] text-zinc-500">Followers</div>
             </div>
             <div>
-              <div className="text-sm font-bold text-zinc-950">520</div>
-              <div className="text-[11px] text-zinc-500">Following</div>
+              <div className="text-sm sm:text-base font-bold text-zinc-950">520</div>
+              <div className="text-[10px] sm:text-[11px] text-zinc-500">Following</div>
             </div>
           </div>
         </div>
@@ -983,11 +988,11 @@ export const SocialProfileMockupSpecimen: React.FC<SpecimenProps> = ({
 
   return (
     <div
-      className="rounded-[24px] pt-8 pl-8 overflow-hidden min-h-[420px] h-full flex flex-col justify-end transition-colors duration-200"
+      className="rounded-[24px] pt-6 pl-6 sm:pt-8 sm:pl-8 overflow-hidden w-full h-full min-h-0 flex flex-col justify-end transition-colors duration-200"
       style={{ backgroundColor: tokens.surfaceTint }}
     >
       <div
-        className="text-white rounded-tl-[36px] p-7 space-y-4 flex-1 flex flex-col justify-between"
+        className="text-white rounded-tl-[32px] sm:rounded-tl-[36px] p-6 sm:p-7 space-y-4 flex-1 flex flex-col justify-between min-h-0"
         style={{ backgroundColor: tokens.darkSurface }}
       >
         <div className="flex items-center gap-3">
@@ -1000,30 +1005,30 @@ export const SocialProfileMockupSpecimen: React.FC<SpecimenProps> = ({
           </span>
         </div>
 
-        <div className="flex items-center gap-7">
+        <div className="flex items-center gap-5 sm:gap-7">
           <div
             className="p-1 rounded-full shrink-0"
             style={{
               background: `linear-gradient(135deg, ${tokens.primaryColor}, ${tokens.supportColor}, ${tokens.accentColor})`,
             }}
           >
-            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white flex items-center justify-center">
               <BrandLogoMark
                 logoId={tokens.logoId}
                 color={tokens.primaryColor}
-                size={32}
+                size={28}
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-7 text-center">
+          <div className="flex items-center gap-5 sm:gap-7 text-center">
             <div>
-              <div className="text-sm font-bold">367</div>
-              <div className="text-[11px] text-white/60">posts</div>
+              <div className="text-sm sm:text-base font-bold">367</div>
+              <div className="text-[10px] sm:text-[11px] text-white/60">posts</div>
             </div>
             <div>
-              <div className="text-sm font-bold">84.5K</div>
-              <div className="text-[11px] text-white/60">followers</div>
+              <div className="text-sm sm:text-base font-bold">84.5K</div>
+              <div className="text-[10px] sm:text-[11px] text-white/60">followers</div>
             </div>
           </div>
         </div>
@@ -1036,7 +1041,7 @@ export const SocialProfileMockupSpecimen: React.FC<SpecimenProps> = ({
             style={{ color: tokens.secondaryColor }}
           >
             <Link2 className="w-3.5 h-3.5" />
-            <span>{tokens.brandCopy.domainUrl}</span>
+            <span className="truncate">{tokens.brandCopy.domainUrl}</span>
           </div>
         </div>
 
@@ -1078,7 +1083,7 @@ export const DetachedPillNavSpecimen: React.FC<SpecimenProps> = ({ tokens }) => 
 
   return (
     <div
-      className="rounded-[24px] p-10 min-h-[420px] h-full flex items-center justify-center transition-colors duration-200"
+      className="rounded-[24px] p-6 sm:p-8 w-full h-full min-h-0 flex items-center justify-center transition-colors duration-200"
       style={{ backgroundColor: tokens.surfaceTint }}
     >
       <div
@@ -1098,22 +1103,22 @@ export const DetachedPillNavSpecimen: React.FC<SpecimenProps> = ({ tokens }) => 
               className="flex items-center gap-3.5 group text-left transition-transform duration-150 hover:translate-x-1"
             >
               <div
-                className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200"
                 style={{
                   backgroundColor: pillBg,
                   color: pillFg,
                 }}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
 
               <div
-                className={`px-7 h-12 flex items-center justify-center whitespace-nowrap transition-all duration-200 ${headingFont}`}
+                className={`px-6 sm:px-7 h-11 sm:h-12 flex items-center justify-center whitespace-nowrap transition-all duration-200 ${headingFont}`}
                 style={{
                   backgroundColor: pillBg,
                   color: pillFg,
                   borderRadius: `${Math.max(8, tokens.radiusPx)}px`,
-                  fontSize: `${Math.round(18 * tokens.fontScale)}px`,
+                  fontSize: `${Math.round(16 * tokens.fontScale)}px`,
                   fontWeight: isActive ? tokens.headingWeight : tokens.bodyWeight,
                   letterSpacing: `${tokens.letterSpacingEm}em`,
                 }}

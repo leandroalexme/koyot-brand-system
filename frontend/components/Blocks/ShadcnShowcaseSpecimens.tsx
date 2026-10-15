@@ -325,9 +325,9 @@ export const ShadcnSliderAnatomySpecimen: React.FC<SpecimenProps> = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="w-full h-full min-h-0 flex flex-col gap-4">
       {/* TOP FULL CARD: Default State */}
-      <div className="bg-white rounded-[24px] p-6 sm:p-8 min-h-[260px] flex flex-col justify-between relative group/card">
+      <div className="bg-white rounded-[24px] p-6 sm:p-8 flex-1 min-h-0 flex flex-col justify-between relative group/card">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-zinc-800">Default</span>
           <div className="flex items-center gap-2">
@@ -354,7 +354,7 @@ export const ShadcnSliderAnatomySpecimen: React.FC<SpecimenProps> = ({
           </div>
         </div>
 
-        <div className="my-auto py-8">
+        <div className="my-auto py-6 sm:py-8">
           {renderSliderInstance('Default', true)}
         </div>
 
@@ -365,19 +365,19 @@ export const ShadcnSliderAnatomySpecimen: React.FC<SpecimenProps> = ({
       <div
         className={`grid ${
           isTwoCol ? 'grid-cols-2' : 'grid-cols-1'
-        } gap-4`}
+        } gap-4 flex-1 min-h-0`}
       >
-        <div className="bg-white rounded-[24px] p-6 sm:p-7 min-h-[220px] flex flex-col justify-between relative group/card">
+        <div className="bg-white rounded-[24px] p-6 sm:p-7 h-full min-h-0 flex flex-col justify-between relative group/card">
           <div className="flex items-center justify-between">
             <span className="text-xs text-zinc-400">Disabled</span>
           </div>
-          <div className="my-auto py-6">
+          <div className="my-auto py-4 sm:py-6">
             {renderSliderInstance('Disabled', false)}
           </div>
           <div />
         </div>
 
-        <div className="bg-white rounded-[24px] p-6 sm:p-7 min-h-[220px] flex flex-col justify-between relative group/card">
+        <div className="bg-white rounded-[24px] p-6 sm:p-7 h-full min-h-0 flex flex-col justify-between relative group/card">
           <div className="flex items-center justify-between">
             <span className="text-xs text-zinc-400">Hover</span>
             <button
@@ -396,7 +396,7 @@ export const ShadcnSliderAnatomySpecimen: React.FC<SpecimenProps> = ({
               )}
             </button>
           </div>
-          <div className="my-auto py-6">
+          <div className="my-auto py-4 sm:py-6">
             {renderSliderInstance('Hover', true)}
           </div>
           <div />
@@ -782,7 +782,7 @@ export const ShadcnNavigationPreviewSpecimen: React.FC<SpecimenProps> = ({
       {/* Fixed Koyot Bento Card (rounded-[24px]) */}
       <div className="bg-[#D6D6D8] rounded-[24px] pt-8 pl-6 sm:pl-8 overflow-hidden flex-1 flex flex-col justify-end">
         <div
-          className="shadow-sm flex min-h-[250px] overflow-hidden"
+          className="shadow-sm flex flex-1 min-h-0 overflow-hidden"
           style={{
             backgroundColor: sidebarBg,
             borderTopLeftRadius: `${tokens.radiusPx}px`,
@@ -1028,11 +1028,11 @@ export const ShadcnInteractiveSuiteSpecimen: React.FC<SpecimenProps> = ({
     <div
       className={`grid ${
         isTwoColSuite ? 'grid-cols-2' : 'grid-cols-1'
-      } gap-5 ${bodyFont}`}
+      } gap-5 w-full h-full min-h-0 ${bodyFont}`}
       style={{ fontWeight: tokens.bodyWeight }}
     >
       {/* 1. Accordion */}
-      <div className="bg-white rounded-[24px] p-7 min-h-[280px] flex flex-col justify-between group">
+      <div className="bg-white rounded-[24px] p-6 sm:p-7 w-full h-full min-h-[160px] flex flex-col justify-between group">
         <div className="flex items-center justify-between">
           <span className="text-xs text-zinc-500">Accordion</span>
           <button
@@ -1103,7 +1103,7 @@ export const ShadcnInteractiveSuiteSpecimen: React.FC<SpecimenProps> = ({
       </div>
 
       {/* 2. Alert dialog */}
-      <div className="bg-white rounded-[24px] p-7 min-h-[280px] flex flex-col justify-between group">
+      <div className="bg-white rounded-[24px] p-6 sm:p-7 w-full h-full min-h-[160px] flex flex-col justify-between group">
         <div className="flex items-center justify-between">
           <span className="text-xs text-zinc-500">Alert dialog</span>
           <button
@@ -1183,7 +1183,7 @@ export const ShadcnInteractiveSuiteSpecimen: React.FC<SpecimenProps> = ({
       </div>
 
       {/* 3. Autocomplete */}
-      <div className="bg-white rounded-[24px] p-7 min-h-[280px] flex flex-col justify-between group">
+      <div className="bg-white rounded-[24px] p-6 sm:p-7 w-full h-full min-h-[160px] flex flex-col justify-between group">
         <div className="flex items-center justify-between">
           <span className="text-xs text-zinc-500">Autocomplete</span>
           <button
@@ -1229,7 +1229,7 @@ export const ShadcnInteractiveSuiteSpecimen: React.FC<SpecimenProps> = ({
       </div>
 
       {/* 4. Avatar */}
-      <div className="bg-white rounded-[24px] p-7 min-h-[280px] flex flex-col justify-between group">
+      <div className="bg-white rounded-[24px] p-6 sm:p-7 w-full h-full min-h-[160px] flex flex-col justify-between group">
         <div className="flex items-center justify-between">
           <span className="text-xs text-zinc-500">Brand Avatar</span>
           <button
@@ -1270,7 +1270,7 @@ export const ShadcnInteractiveSuiteSpecimen: React.FC<SpecimenProps> = ({
       </div>
 
       {/* 5. Button */}
-      <div className="bg-white rounded-[24px] p-7 min-h-[240px] flex flex-col justify-between group">
+      <div className="bg-white rounded-[24px] p-6 sm:p-7 w-full h-full min-h-[160px] flex flex-col justify-between group">
         <div className="flex items-center justify-between">
           <span className="text-xs text-zinc-500">Button</span>
           <button
@@ -1309,7 +1309,7 @@ export const ShadcnInteractiveSuiteSpecimen: React.FC<SpecimenProps> = ({
       </div>
 
       {/* 6. Checkbox */}
-      <div className="bg-white rounded-[24px] p-7 min-h-[240px] flex flex-col justify-between group">
+      <div className="bg-white rounded-[24px] p-6 sm:p-7 w-full h-full min-h-[160px] flex flex-col justify-between group">
         <div className="flex items-center justify-between">
           <span className="text-xs text-zinc-500">Checkbox</span>
           <button
