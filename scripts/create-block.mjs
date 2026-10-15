@@ -101,11 +101,21 @@ export default defineBlock({
     activeVariant = 'Default',
     selectedSubElementId,
     onSelectSubElement,
-    isDark = true,
+    isDark = false,
   }) => {
     const isMinimal = activeVariant === 'Minimal';
-    const fontClass = getFontClass(tokens.fontFamily);
     const readableText = getReadableTextColor(tokens.primaryColor);
+
+    const headingStyle: React.CSSProperties = {
+      fontFamily: tokens.headingFont,
+      fontWeight: tokens.headingWeight || 600,
+      letterSpacing: \`\${tokens.letterSpacingEm || -0.02}em\`,
+    };
+
+    const bodyStyle: React.CSSProperties = {
+      fontFamily: tokens.bodyFont,
+      fontWeight: tokens.bodyWeight || 400,
+    };
 
     return (
       <div
@@ -158,16 +168,17 @@ export default defineBlock({
               e.stopPropagation();
               onSelectSubElement?.('headline');
             }}
-            className={\`text-xl font-bold tracking-tight text-foreground transition-all \${fontClass} \${
+            className={\`text-xl tracking-tight text-foreground transition-all \${
               selectedSubElementId === 'headline'
                 ? 'underline decoration-primary decoration-2 underline-offset-4'
                 : ''
             }\`}
+            style={headingStyle}
           >
             {isMinimal ? '${rawName}' : tokens.brandName}
           </h3>
 
-          <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+          <p className="text-sm text-muted-foreground mt-2 line-clamp-2" style={bodyStyle}>
             ${description}
           </p>
 
