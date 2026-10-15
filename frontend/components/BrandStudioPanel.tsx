@@ -66,10 +66,12 @@ import {
   Terminal,
 } from 'lucide-react';
 
+import { useBrandSystem } from '../context/BrandSystemContext';
+
 interface BrandStudioPanelProps {
-  tokens: BrandTokens;
-  onChangeTokens: (next: BrandTokens) => void;
-  onResetTokens: () => void;
+  tokens?: BrandTokens;
+  onChangeTokens?: (next: BrandTokens) => void;
+  onResetTokens?: () => void;
   selectedTarget?: SelectedInspectorTarget | null;
   selectedBlock?: EditorialBlock | null;
   selectedRowLayout?: ColumnLayout;
@@ -121,20 +123,44 @@ export const SUB_ELEMENTS_BY_BLOCK: Partial<
   ],
 };
 
-export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = ({
-  tokens,
-  onChangeTokens,
-  onResetTokens,
-  selectedTarget = null,
-  selectedBlock = null,
-  selectedRowLayout,
-  onClearSelection,
-  onSelectSubElement,
-  onUpdateBlock,
-  onChangeRowLayout,
-  onDeleteRow,
-  onOpenExportModal,
-}) => {
+export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
+  const brandSys = useBrandSystem();
+
+  const tokens = props.tokens ?? brandSys.tokens;
+  const onChangeTokens = props.onChangeTokens ?? ((next: BrandTokens) => brandSys.updateTokens(() => next));
+  const onResetTokens = props.onResetTokens ?? brandSys.resetAllToDefault;
+  const selectedTarget = props.selectedTarget !== undefined ? props.selectedTarget : brandSys.selectedTarget;
+  const onClearSelection = props.onClearSelection ?? (() => brandSys.setSelectedTarget(null));
+  const onSelectSubElement = props.onSelectSubElement ?? ((subId, subLabel) => {
+    if (!brandSys.selectedTarget) return;
+    brandSys.setSelectedTarget({
+      ...brandSys.selectedTarget,
+      subElementId: subId,
+      subElementLabel: subLabel,
+    });
+  });
+  const onUpdateBlock = props.onUpdateBlock ?? ((updater) => {
+    if (!brandSys.selectedTarget) return;
+    brandSys.handleUpdateBlock(
+      brandSys.selectedTarget.rowId,
+      brandSys.selectedTarget.blockId,
+      updater
+    );
+  });
+  const onDeleteRow = props.onDeleteRow ?? (() => {
+    if (!brandSys.selectedTarget) return;
+    brandSys.handleDeleteRow(brandSys.selectedTarget.rowId);
+  });
+  const onOpenExportModal = props.onOpenExportModal ?? brandSys.setExportModalPrimitive;
+
+  const selectedRow = brandSys.pages
+    .flatMap((p) => p.rows)
+    .find((r) => r.id === selectedTarget?.rowId);
+  const selectedBlock = props.selectedBlock ?? selectedRow?.blocks.find((b) => b.id === selectedTarget?.blockId) ?? null;
+  const selectedRowLayout = props.selectedRowLayout ?? selectedRow?.layout;
+  const onChangeRowLayout = props.onChangeRowLayout ?? ((nextLayout) => {
+    // layout update
+  });
   const [studioView, setStudioView] = useState<StudioView>('main');
   const [openEditSections, setOpenEditSections] = useState<
     Record<EditSectionId, boolean>
