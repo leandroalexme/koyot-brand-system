@@ -48,8 +48,7 @@ export default defineBlock({
       fontWeight: tokens.bodyWeight || 400,
     };
 
-    // 3. Raios de Borda Dinâmicos derivados de tokens.radiusPx
-    const blockRadius = `${Math.max(16, tokens.radiusPx + 4)}px`;
+    // 3. Raio de Borda dos Swatches (100% Reativo a tokens.radiusPx)
     const cardRadius = `${tokens.radiusPx}px`;
 
     // 4. Cores 100% Derivadas dos Tokens da Marca Ativa
@@ -111,11 +110,9 @@ export default defineBlock({
 
     return (
       <div
-        className="w-full h-full flex flex-col overflow-hidden select-none relative"
+        className="w-full h-full flex flex-col overflow-hidden select-none relative rounded-[24px] p-5 sm:p-6"
         style={{
           backgroundColor: showcaseBg,
-          borderRadius: blockRadius,
-          padding: `${sp(16)}px ${sp(18)}px`,
         }}
       >
         {/* Pilha de Cartões: Zero Overflow com min-h-0 e flex proporcional */}

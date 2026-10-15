@@ -45,10 +45,7 @@ export const LogotypeScalingSpecimen: React.FC<SpecimenProps> = ({ tokens }) => 
   ];
 
   return (
-    <div
-      className="bg-white rounded-[24px] flex flex-col justify-between w-full h-full min-h-0 overflow-hidden"
-      style={{ padding: `${Math.round(32 * tokens.spacingMultiplier)}px` }}
-    >
+    <div className="bg-white rounded-[24px] p-6 sm:p-8 flex flex-col justify-between w-full h-full min-h-0 overflow-hidden">
       <div className="flex items-center gap-2 pb-4 border-b border-zinc-100 shrink-0">
         <span
           className="w-2 h-2 rounded-full"
@@ -205,8 +202,7 @@ export const IconGridInspectorSpecimen: React.FC<SpecimenProps> = ({ tokens }) =
   return (
     <div
       onClick={() => setActiveIdx((activeIdx + 1) % items.length)}
-      className="bg-white rounded-[24px] flex flex-col justify-between w-full h-full min-h-0 overflow-hidden cursor-pointer select-none"
-      style={{ padding: `${Math.round(32 * tokens.spacingMultiplier)}px` }}
+      className="bg-white rounded-[24px] p-6 sm:p-8 flex flex-col justify-between w-full h-full min-h-0 overflow-hidden cursor-pointer select-none"
     >
       {/* Minimalist Top Bar */}
       <div className="flex items-center justify-between text-xs text-zinc-900">
@@ -380,11 +376,10 @@ export const StylisticSetSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
 
   return (
     <div
-      className="rounded-[24px] w-full h-full min-h-0 overflow-hidden flex flex-col justify-between transition-colors duration-200"
+      className="rounded-[24px] p-6 sm:p-8 w-full h-full min-h-0 overflow-hidden flex flex-col justify-between transition-colors duration-200"
       style={{
         backgroundColor: tokens.surfaceTint,
         color: '#18181B',
-        padding: `${Math.round(32 * tokens.spacingMultiplier)}px`,
       }}
     >
       {/* Top Section: Side-by-side Glyph Alternates */}
@@ -586,11 +581,10 @@ export const TypeScaleSheetSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
 
   return (
     <div
-      className="rounded-[24px] w-full h-full min-h-0 overflow-hidden transition-colors duration-200 flex flex-col justify-between"
+      className="rounded-[24px] p-6 sm:p-8 w-full h-full min-h-0 overflow-hidden transition-colors duration-200 flex flex-col justify-between"
       style={{
         backgroundColor: tokens.accentColor,
         color: fgAccent,
-        padding: `${Math.round(28 * tokens.spacingMultiplier)}px`,
       }}
     >
       <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest opacity-70 mb-2 shrink-0">

@@ -48,8 +48,7 @@ export default defineBlock({
       fontWeight: tokens.bodyWeight || 400,
     };
 
-    // Raio de Borda 100% Reativo a tokens.radiusPx
-    const blockRadius = `${Math.max(16, tokens.radiusPx + 4)}px`;
+    // Raio de Borda dos Componentes (100% Reativo a tokens.radiusPx para cards internos e badges)
     const cardRadius = `${tokens.radiusPx}px`;
     const innerRadius = `${Math.max(0, tokens.radiusPx - 6)}px`;
     const avatarRadius = `${Math.max(4, Math.round(tokens.radiusPx * 0.7))}px`;
@@ -62,11 +61,9 @@ export default defineBlock({
 
     return (
       <div
-        className="w-full h-full flex flex-col items-center justify-center select-none transition-all duration-200 overflow-hidden relative"
+        className="w-full h-full flex flex-col items-center justify-center select-none transition-all duration-200 overflow-hidden relative rounded-[24px] p-6 sm:p-8"
         style={{
           backgroundColor: showcaseBg,
-          borderRadius: blockRadius,
-          padding: `${sp(40)}px ${sp(32)}px`,
         }}
       >
         {/* Vitrine Central: Objeto de Design com Respiro Lateral Reativo */}

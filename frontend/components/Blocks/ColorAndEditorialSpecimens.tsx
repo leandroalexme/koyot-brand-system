@@ -27,10 +27,10 @@ export const ColorProportionSpecimen: React.FC<SpecimenProps> = ({ tokens }) => 
 
   return (
     <div
-      className="bg-white rounded-[24px] flex flex-col justify-between h-full w-full min-h-0 overflow-hidden"
-      style={{ padding: `${sp(28)}px`, gap: `${sp(16)}px` }}
+      className="bg-white rounded-[24px] p-6 sm:p-7 flex flex-col justify-between h-full w-full min-h-0 overflow-hidden"
+      style={{ gap: `${sp(16)}px` }}
     >
-      <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-zinc-400">
+      <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-zinc-400 shrink-0">
         <span>Color Proportion · 60/30/10</span>
         <span>{tokens.brandName} Palette</span>
       </div>
@@ -114,8 +114,7 @@ export const ColorSwatchesSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
 
   return (
     <div
-      className="bg-white rounded-[24px] w-full h-full min-h-0 flex flex-col justify-between overflow-hidden"
-      style={{ padding: `${Math.round(32 * tokens.spacingMultiplier)}px` }}
+      className="bg-white rounded-[24px] p-6 sm:p-8 w-full h-full min-h-0 flex flex-col justify-between overflow-hidden"
     >
       <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-zinc-400 mb-4 shrink-0">
         <span>Color Swatches</span>
@@ -259,11 +258,10 @@ export const SocialCardPosterSpecimen: React.FC<SpecimenProps> = ({ tokens, bloc
 
     return (
       <div
-        className="rounded-[24px] w-full h-full min-h-0 flex flex-col justify-between relative overflow-hidden transition-colors duration-200"
+        className="rounded-[24px] p-6 sm:p-8 w-full h-full min-h-0 flex flex-col justify-between relative overflow-hidden transition-colors duration-200"
         style={{
           backgroundColor: tokens.primaryColor,
           color: fgColor,
-          padding: `${Math.round(34 * tokens.spacingMultiplier)}px`,
         }}
       >
         <div
@@ -319,7 +317,7 @@ export const SocialCardPosterSpecimen: React.FC<SpecimenProps> = ({ tokens, bloc
   const [cLine1, cLine2, cLine3] = tokens.brandCopy.socialCardHeadline;
 
   return (
-    <div className="rounded-[24px] bg-white p-8 flex items-center justify-center w-full h-full min-h-0 overflow-hidden">
+    <div className="rounded-[24px] bg-white p-6 sm:p-8 flex items-center justify-center w-full h-full min-h-0 overflow-hidden">
       <div
         className="bg-[#FAFAFA] max-w-sm w-full space-y-5 transition-all"
         style={{
@@ -403,10 +401,9 @@ export const EditorialValuesListSpecimen: React.FC<SpecimenProps> = ({ tokens })
 
   return (
     <div
-      className="rounded-[24px] flex flex-col items-center justify-center text-center w-full h-full min-h-0 overflow-hidden transition-colors duration-200"
+      className="rounded-[24px] p-6 sm:p-8 md:p-10 flex flex-col items-center justify-center text-center w-full h-full min-h-0 overflow-hidden transition-colors duration-200"
       style={{
         backgroundColor: tokens.surfaceTint,
-        padding: `${Math.round(40 * tokens.spacingMultiplier)}px`,
       }}
     >
       <div

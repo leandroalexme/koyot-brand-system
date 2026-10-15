@@ -55,11 +55,9 @@ export default defineBlock({
 
     return (
       <div
-        className="w-full h-full flex flex-col justify-between rounded-[24px] overflow-hidden select-none relative transition-all duration-200 border border-border/40"
+        className="w-full h-full flex flex-col justify-between rounded-[24px] overflow-hidden select-none relative transition-all duration-200 border border-border/40 p-6 sm:p-8"
         style={{
           backgroundColor: isDarkMode ? '#0d0d10' : '#ffffff',
-          borderRadius: `${Math.max(16, tokens.radiusPx + 4)}px`,
-          padding: `${sp(36)}px ${sp(40)}px`,
         }}
       >
         {/* Topo Sutil */}

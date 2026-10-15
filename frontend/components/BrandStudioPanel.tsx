@@ -1048,9 +1048,10 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
                 )}
               </div>
 
-              {/* 7. BENTO BLOCK & ROW SETTINGS */}
-              <div className="py-3.5 space-y-3">
-                <button
+              {/* 7. BENTO BLOCK & ROW SETTINGS (Only shown when inspecting the block container, not a sub-element) */}
+              {!subId && (
+                <div className="py-3.5 space-y-3">
+                  <button
                   type="button"
                   onClick={() => toggleInspectorSection('blockSettings')}
                   className="w-full flex items-center justify-between text-xs font-medium text-white"
@@ -1143,6 +1144,7 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
                   </div>
                 )}
               </div>
+              )}
             </div>
           </div>
         </div>
@@ -1452,7 +1454,7 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
               {/* Stepped Corner Radius Slider */}
               <div className="space-y-1.5 pt-0.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-zinc-400">Corners</span>
+                  <span className="text-zinc-400">Corner radius (UI)</span>
                   <span className="text-zinc-400">{tokens.radiusPx}px</span>
                 </div>
                 <SteppedPillSlider<number>
@@ -1879,7 +1881,7 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
                   >
                     <span className="flex items-center gap-3">
                       <CornerUpRight className="w-4 h-4 text-zinc-400" />
-                      <span>Corners</span>
+                      <span>Corner radius (UI)</span>
                     </span>
                     {openEditSections.corners ? (
                       <ChevronDown className="w-4 h-4 text-zinc-400" />

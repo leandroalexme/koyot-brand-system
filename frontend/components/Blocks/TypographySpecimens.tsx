@@ -22,11 +22,10 @@ export const TypographySculptureSpecimen: React.FC<SpecimenProps> = ({ tokens, b
   if (block.theme === 'brand') {
     return (
       <div
-        className="rounded-[24px] w-full h-full min-h-0 overflow-hidden flex flex-col justify-between text-center transition-colors duration-200"
+        className="rounded-[24px] p-6 sm:p-8 md:p-10 w-full h-full min-h-0 overflow-hidden flex flex-col justify-between text-center transition-colors duration-200"
         style={{
           backgroundColor: tokens.accentColor,
           color: getReadableTextColor(tokens.accentColor),
-          padding: `${Math.round(36 * tokens.spacingMultiplier)}px`,
         }}
       >
         <div
@@ -161,10 +160,7 @@ export const TypographyAlphabetSpecimen: React.FC<SpecimenProps> = ({ tokens }) 
   const headingFont = getFontClass(tokens.headingFont);
 
   return (
-    <div
-      className="bg-white rounded-[24px] w-full h-full min-h-0 flex flex-col justify-between overflow-hidden"
-      style={{ padding: `${Math.round(36 * tokens.spacingMultiplier)}px` }}
-    >
+    <div className="bg-white rounded-[24px] p-6 sm:p-8 w-full h-full min-h-0 flex flex-col justify-between overflow-hidden">
       <div
         className="flex items-center justify-between text-xs text-zinc-400 mb-4 shrink-0"
         style={{ fontWeight: tokens.bodyWeight }}
@@ -217,10 +213,7 @@ export const TypographyHierarchySpecimen: React.FC<SpecimenProps> = ({ tokens })
   ];
 
   return (
-    <div
-      className="bg-white rounded-[24px] w-full h-full min-h-0 flex flex-col justify-between overflow-hidden"
-      style={{ padding: `${Math.round(36 * tokens.spacingMultiplier)}px` }}
-    >
+    <div className="bg-white rounded-[24px] p-6 sm:p-8 w-full h-full min-h-0 flex flex-col justify-between overflow-hidden">
       <div
         className="flex items-center justify-between text-xs text-zinc-400 mb-4 shrink-0"
         style={{ fontWeight: tokens.bodyWeight }}
