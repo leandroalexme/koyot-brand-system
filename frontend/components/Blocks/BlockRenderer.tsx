@@ -48,7 +48,7 @@ import {
 import { BrandLogoMark } from './BrandLogoMark';
 import { ProportionalArtboard } from './ProportionalArtboard';
 import { ResizableComponentFrame } from './ResizableComponentFrame';
-import { getSpecimenById } from '../../sdk/specimen';
+import { getBlockById } from '../../sdk/block';
 import {
   getReadableTextColor,
   resolveSemanticColorToken,
@@ -118,14 +118,14 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     : undefined;
 
   const renderContent = () => {
-    // 1. Dynamic SDK Specimen Auto-Discovery
-    const dynamicSpecimen = getSpecimenById(block.type);
-    if (dynamicSpecimen) {
-      const SpecimenComponent = dynamicSpecimen.render;
+    // 1. Dynamic Block SDK Auto-Discovery
+    const dynamicBlock = getBlockById(block.type);
+    if (dynamicBlock) {
+      const BlockComponent = dynamicBlock.render;
       const activeVariant =
-        block.variant || dynamicSpecimen.variants?.[0] || 'Default';
+        block.variant || dynamicBlock.variants?.[0] || 'Default';
       return (
-        <SpecimenComponent
+        <BlockComponent
           tokens={tokens}
           block={block}
           activeVariant={activeVariant}

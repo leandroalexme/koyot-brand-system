@@ -42,7 +42,7 @@ import {
   SHADCN_PRIMITIVES_CATALOG,
   ShadcnPrimitiveId,
 } from '../utils/shadcnRegistryGenerator';
-import { SHADCN_BLOCK_VARIANTS } from './Specimens/ShadcnSingleComponentSpecimen';
+import { SHADCN_BLOCK_VARIANTS } from './Blocks/ShadcnSingleComponentSpecimen';
 import { ShadcnSingleBlockType } from '../types';
 import {
   SlidersHorizontal,
@@ -67,7 +67,7 @@ import {
 } from 'lucide-react';
 
 import { useBrandSystem } from '../context/BrandSystemContext';
-import { getSpecimenSubElements, getSpecimenVariants } from '../sdk/specimen';
+import { getBlockSubElements, getBlockVariants } from '../sdk/block';
 
 interface BrandStudioPanelProps {
   tokens?: BrandTokens;
@@ -442,14 +442,14 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
             kind: sp.kind,
           }))
         : SUB_ELEMENTS_BY_BLOCK[selectedBlock.type] ||
-          getSpecimenSubElements(selectedBlock.type) ||
+          getBlockSubElements(selectedBlock.type) ||
           [];
 
     const activeSubMeta = availableSubElements.find((s) => s.id === subId);
 
     const blockVariants = isSingleUiBlock
       ? SHADCN_BLOCK_VARIANTS[selectedBlock.type as ShadcnSingleBlockType] || []
-      : getSpecimenVariants(selectedBlock.type);
+      : getBlockVariants(selectedBlock.type);
 
     const currentOverrides: SubElementStyleOverrides = subId
       ? selectedBlock.subElements?.[subId] || {}
@@ -1065,7 +1065,7 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
                   <div className="space-y-3 pt-1">
                     <div className="space-y-1.5">
                       <span className="text-[11px] text-zinc-400">
-                        Specimen Type
+                        Tipo de Bloco
                       </span>
                       <select
                         value={selectedBlock.type}

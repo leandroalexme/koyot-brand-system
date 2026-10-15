@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useBrandSystem } from '../../context/BrandSystemContext';
-import { getUnifiedBlockCatalog } from '../../sdk/specimen';
+import { getUnifiedBlockCatalog } from '../../sdk/block';
 import { BlockCategory, ColumnLayout, BlockType } from '../../types';
 import {
   Search,
@@ -13,22 +13,25 @@ import {
   FileText,
   Layout,
   Plus,
+  Box,
 } from 'lucide-react';
 
-const CATEGORY_LABELS: Record<BlockCategory, string> = {
-  identity: 'Identity Block',
-  typography: 'Typography Block',
-  color: 'Color Block',
-  applications: 'Applications Block',
-  rules: 'Rules Block',
-  content: 'Content Block',
-  frame: 'Frame Block',
+const CATEGORY_LABELS: Record<string, string> = {
+  identity: 'Identidade',
+  typography: 'Tipografia',
+  color: 'Cores',
+  mockups: 'Mockups & Aplicações',
+  applications: 'Aplicações',
+  rules: 'Diretrizes',
+  content: 'Conteúdo',
+  frame: 'Frames',
 };
 
-const CATEGORY_ICONS: Record<BlockCategory, React.ComponentType<{ className?: string }>> = {
+const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   identity: Sparkles,
   typography: Type,
   color: Palette,
+  mockups: Box,
   applications: Layers,
   rules: ShieldAlert,
   content: FileText,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useBrandSystem } from '../../context/BrandSystemContext';
 import { BRAND_PRESETS } from '../../constants';
-import { BrandLogoMark } from '../Specimens/BrandLogoMark';
+import { BrandLogoMark } from '../Blocks/BrandLogoMark';
 import {
   Sparkles,
   BookOpen,

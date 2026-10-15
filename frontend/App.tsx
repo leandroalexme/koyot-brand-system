@@ -4,7 +4,7 @@ import {
   useBrandSystem,
 } from './context/BrandSystemContext';
 import { TopBrandBar } from './components/Navigation/TopBrandBar';
-import { BlockRenderer } from './components/Specimens/BlockRenderer';
+import { BlockRenderer } from './components/Blocks/BlockRenderer';
 import { BrandStudioPanel } from './components/BrandStudioPanel';
 import { ShadcnExportModal } from './components/ShadcnExportModal';
 import { AddBlockModal } from './components/Modals/AddBlockModal';
