@@ -1,0 +1,192 @@
+[data-system="koyot"], .koyot, [data-system="lime"], .lime {
+  /* 1. Surfaces & Neutrals (Neutral 1–10 Ramp) */
+  --page: #ffffff;
+  --surface: #f6f5f2;
+  --surface-2: #efeeea;
+  --surface-3: #e6e4df;
+  --raised: #ffffff;
+  --field: #f6f5f2;
+  --scrim: rgb(15 15 13 / 0.5);
+
+  /* 2. Text & Ink Hierarchy */
+  --fg: #09090b;
+  --fg-2: #3f3f46;
+  --fg-3: #71717a;
+  --fg-disabled: #a1a1aa;
+  --fg-inverse: #ffffff;
+  --on-accent: #ffffff;
+  --glow-accent-fg: #ffffff;
+
+  /* 3. Borders, Hairlines & Geometry */
+  --border-width: 1px;
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
+  --control: #71717a;
+
+  /* 4. Solid Ink Actions */
+  --ink: #09090b;
+  --ink-hover: #27272a;
+  --ink-active: #3f3f46;
+
+  /* 5. Brand Palette & Primary Action */
+  --accent: #ea0a2a;
+  --accent-hover: #d10824;
+  --accent-active: #b8061f;
+  --accent-wash: #f4f1ea;
+  --accent-line: #ea0a2a;
+  --ring: var(--accent-line);
+
+  --support: #f7c2cc;
+  --secondary: #153e75;
+  --highlight: #f5d5a7;
+
+  /* 6. Semantic Status Tokens */
+  --success: #1e8e4a;
+  --success-tint: #e5f5ea;
+  --success-text: #17703a;
+  --warn: #c27a00;
+  --warn-tint: #fff3d6;
+  --warn-text: #8a5200;
+  --danger: #d93636;
+  --danger-hover: #c02c2c;
+  --danger-tint: #fdebeb;
+  --on-danger: #ffffff;
+  --danger-text: #b42323;
+
+  /* 7. Elevation & Shadows */
+  --shadow-ink: 24 24 27;
+  --shadow-card: 0 1px 2px rgb(var(--shadow-ink) / 0.06), 0 1px 1px rgb(var(--shadow-ink) / 0.04);
+  --shadow-menu: 0 8px 24px -6px rgb(var(--shadow-ink) / 0.16), 0 2px 6px rgb(var(--shadow-ink) / 0.06);
+  --shadow-overlay: 0 24px 48px -12px rgb(var(--shadow-ink) / 0.24), 0 4px 12px rgb(var(--shadow-ink) / 0.08);
+  --thumb: #ffffff;
+  --switch-on: var(--accent);
+  --switch-on-thumb: var(--thumb);
+  --shadow-thumb: 0 2px 5px rgb(var(--shadow-ink) / 0.12), 0 1px 1px rgb(var(--shadow-ink) / 0.08), 0 0 0 0.5px rgb(var(--shadow-ink) / 0.1);
+
+  /* 8. Tactile Glow Tokens */
+  --glow-accent-from: #d10824;
+  --glow-accent-to: #ff3b56;
+  --glow-accent-edge: rgb(255 255 255 / 0.45);
+  --glow-accent-bloom: rgb(255 255 255 / 0.2);
+  --glow-accent-cast: 120 20 30;
+  --glow-accent-light: 0.45;
+  --glow-accent-from-lit: #e00a28;
+  --glow-accent-to-lit: #ff526a;
+  --glow-accent-edge-lit: rgb(255 255 255 / 0.65);
+  --glow-accent-bloom-lit: rgb(255 255 255 / 0.3);
+  --glow-accent-from-press: #b8061f;
+  --glow-accent-to-press: #d10824;
+
+  --glow-danger-from: #a31f1f;
+  --glow-danger-to: #c42b2b;
+  --glow-danger-edge: rgb(255 255 255 / 0.4);
+  --glow-danger-bloom: rgb(255 255 255 / 0.16);
+  --glow-danger-cast: 130 30 30;
+  --glow-danger-light: 0.4;
+  --glow-danger-from-lit: #b02424;
+  --glow-danger-to-lit: #d03333;
+  --glow-danger-edge-lit: rgb(255 255 255 / 0.6);
+  --glow-danger-bloom-lit: rgb(255 255 255 / 0.24);
+  --glow-danger-from-press: #8a1818;
+  --glow-danger-to-press: #a82121;
+
+  --glow-success-from: #136b35;
+  --glow-success-to: #1a8445;
+  --glow-success-edge: rgb(255 255 255 / 0.4);
+  --glow-success-bloom: rgb(255 255 255 / 0.16);
+  --glow-success-cast: 20 100 55;
+  --glow-success-light: 0.4;
+  --glow-success-fg: #ffffff;
+  --glow-success-from-lit: #126f39;
+  --glow-success-to-lit: #1a8445;
+  --glow-success-edge-lit: rgb(255 255 255 / 0.6);
+  --glow-success-bloom-lit: rgb(255 255 255 / 0.24);
+  --glow-success-from-press: #0f5a2b;
+  --glow-success-to-press: #157038;
+
+  /* 9. 4 Semantic Font Roles & 7-Tier Modular Type Scale (XXS–XXL) */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-brand: "Plus Jakarta Sans", var(--font-sans);
+  --font-editorial: "Instrument Serif", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-2xl: 28px;
+  --text-3xl: 36px;
+
+  --leading-tight: 1.2;
+  --leading-snug: 1.35;
+  --leading-normal: 1.5;
+  --tracking-tight: -0.02em;
+  --tracking-brand: -0.025em;
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 700;
+
+  /* 10. Control Heights & Spacing Density */
+  --control-sm: 32px;
+  --control-md: 40px;
+  --control-lg: 48px;
+
+  /* 11. Functional Corner Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-field: 12px;
+  --radius-panel: 16px;
+  --radius-sheet: 24px;
+  --radius-control: 16px;
+
+  /* 12. Motion & Physics */
+  --dur-instant: 80ms;
+  --dur-fast: 140ms;
+  --dur-base: 200ms;
+  --dur-slow: 280ms;
+  --dur-spin: 900ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --scale-enter: 0.97;
+  --scale-press: 0.98;
+
+  /* 13. Z-Index & Layout Constraints */
+  --z-dialog: 40;
+  --z-popover: 50;
+  --z-toast: 60;
+  --overlay-sm: 384px;
+  --overlay: 480px;
+  --overlay-lg: 640px;
+  --popover: 320px;
+  --sheet: 400px;
+  --popup-max: 320px;
+  --focus-offset: 2px;
+  --line-focus: 2px;
+  --scrollbar-thumb: var(--line-strong);
+}
+
+[data-system="koyot"][data-theme="dark"], .koyot[data-theme="dark"], [data-system="lime"][data-theme="dark"], .lime[data-theme="dark"] {
+  --page: #0e0e0c;
+  --surface: #1a1a17;
+  --surface-2: #262622;
+  --surface-3: #32322d;
+  --raised: #1f1f1c;
+  --field: #1a1a17;
+  --scrim: rgb(0 0 0 / 0.64);
+
+  --fg: #f4f3ee;
+  --fg-2: #c9c7be;
+  --fg-3: #9a9890;
+  --fg-disabled: #5e5d57;
+  --fg-inverse: #09090b;
+
+  --line: #2e2e29;
+  --line-strong: #3f3f39;
+  --control: #8a8880;
+
+  --ink: #f4f3ee;
+  --ink-hover: #e1dfd7;
+  --ink-active: #cfcdc4;
+}

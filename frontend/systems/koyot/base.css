@@ -1,0 +1,42 @@
+[data-system="koyot"], .koyot, [data-system="lime"], .lime {
+  background: var(--page);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-normal);
+  text-wrap: pretty;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color-scheme: light;
+}
+[data-system="koyot"][data-theme="dark"], .koyot[data-theme="dark"], [data-system="lime"][data-theme="dark"], .lime[data-theme="dark"] { color-scheme: dark; }
+@layer base {
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(*, ::before, ::after) { box-sizing: border-box; border: 0 solid var(--line); margin: 0; padding: 0; }
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd, pre) { margin: 0; font: inherit; }
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(h1, h2, h3, [data-slot="card-title"], [data-slot="alert-dialog-title"], [data-slot="popover-title"]) {
+    font-family: var(--font-brand);
+    letter-spacing: var(--tracking-brand);
+  }
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(ul, ol) { list-style: none; }
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(a) { color: inherit; text-decoration: inherit; }
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(button, input, select, textarea) { font: inherit; letter-spacing: inherit; color: inherit; background: transparent; }
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(button, [role="button"]) { cursor: pointer; }
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(button:disabled, [aria-disabled="true"]) { cursor: not-allowed; }
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(img, video, canvas, svg) { display: block; max-width: 100%; }
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(table) { border-collapse: collapse; }
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(code, kbd, samp, pre) { font-family: var(--font-mono); }
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(td, th, time, data, output, [data-slot="amount"], [data-slot="balance"]) {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(a, button, summary, input, select, textarea, label, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [role="switch"], [role="checkbox"], [role="radio"]) {
+    transition-property: color, background-color, border-color, box-shadow, opacity;
+    transition-duration: var(--dur-instant);
+    transition-timing-function: var(--ease-out);
+  }
+  :where(.koyot, [data-system="koyot"], .lime, [data-system="lime"]) :where(*, ::before, ::after) { outline-color: var(--ring); }
+}
+:where(.koyot, .lime) ::selection { background: var(--accent); color: var(--on-accent); }
+:where(.koyot, .lime) :where(*):is(:focus-visible, [data-force-focus-visible]) { outline: var(--line-focus) solid var(--ring); outline-offset: var(--focus-offset); }
+:where(.koyot, .lime), :where(.koyot, .lime) * { scrollbar-color: var(--scrollbar-thumb) transparent; }
