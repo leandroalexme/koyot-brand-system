@@ -52,13 +52,19 @@ export default defineBlock({
       fontWeight: tokens.bodyWeight || 400,
     };
 
+    const spacingMul = tokens.spacingMultiplier || 1;
+    const fontScale = tokens.fontScale || 1;
+    const sp = (basePx: number) => Math.round(basePx * spacingMul);
+    const fs = (basePx: number) => Math.round(basePx * fontScale);
+
     return (
       <div
-        className="w-full h-full flex flex-col justify-between p-8 sm:p-12 rounded-[24px] overflow-hidden select-none transition-colors duration-200 border border-border/40 relative"
+        className="w-full h-full flex flex-col justify-between rounded-[24px] overflow-hidden select-none transition-all duration-200 border border-border/40 relative"
         style={{
           backgroundColor: bg,
           color: fg,
-          borderRadius: `${Math.max(20, tokens.radiusPx + 4)}px`,
+          borderRadius: `${Math.max(16, tokens.radiusPx + 4)}px`,
+          padding: `${sp(40)}px ${sp(48)}px`,
         }}
       >
         {/* Metadado Sutil de Canto */}

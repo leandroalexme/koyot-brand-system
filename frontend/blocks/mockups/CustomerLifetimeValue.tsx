@@ -26,10 +26,17 @@ export default defineBlock({
     const [imgFailed, setImgFailed] = useState(false);
     const isMinimal = activeVariant === 'Minimal';
 
+    // Helpers de Escala Dinâmica (Zero Hardcode!)
+    const spacingMul = tokens.spacingMultiplier || 1;
+    const fontScale = tokens.fontScale || 1;
+    const sp = (basePx: number) => Math.round(basePx * spacingMul);
+    const fs = (basePx: number) => Math.round(basePx * fontScale);
+
     const brandColor = tokens.primaryColor;
+    const secondaryColor = tokens.secondaryColor || tokens.supportColor;
     const vipTextColor = getReadableTextColor(brandColor);
 
-    // Tipografia da marca
+    // Tipografia Viva 100% Reativa aos Tokens
     const headingStyle: React.CSSProperties = {
       fontFamily: tokens.headingFont,
       fontWeight: tokens.headingWeight || 600,
@@ -41,27 +48,32 @@ export default defineBlock({
       fontWeight: tokens.bodyWeight || 400,
     };
 
-    // Raio reativo
-    const outerRadius = `${Math.max(16, tokens.radiusPx + 4)}px`;
-    const cardRadius = `${Math.max(14, tokens.radiusPx)}px`;
-    const innerRadius = `${Math.max(4, tokens.radiusPx - 8)}px`;
+    // Raio de Borda 100% Reativo a tokens.radiusPx
+    const blockRadius = `${Math.max(16, tokens.radiusPx + 4)}px`;
+    const cardRadius = `${tokens.radiusPx}px`;
+    const innerRadius = `${Math.max(0, tokens.radiusPx - 6)}px`;
+    const avatarRadius = `${Math.max(4, Math.round(tokens.radiusPx * 0.7))}px`;
 
-    // Superfície de Vitrine Neutra (como em um showroom/exposição de marca)
-    const showcaseBg = isDark ? '#18181b' : '#E8E8E8';
-    const cardBg = isDark ? '#242427' : '#FFFFFF';
+    // Superfícies de Vitrine Dinâmicas
+    const showcaseBg = isDark ? '#141416' : '#E8E8E8';
+    const cardBg = isDark ? '#1E1E22' : '#FFFFFF';
     const cardBorder = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)';
-    const gridLineColor = isDark ? 'rgba(255,255,255,0.06)' : '#F0F0F0';
+    const gridLineColor = isDark ? 'rgba(255,255,255,0.06)' : '#EEEEEE';
 
     return (
       <div
-        className="w-full h-full flex flex-col items-center justify-center p-6 sm:p-10 select-none transition-colors duration-200 overflow-hidden relative"
+        className="w-full h-full flex flex-col items-center justify-center select-none transition-all duration-200 overflow-hidden relative"
         style={{
           backgroundColor: showcaseBg,
-          borderRadius: `${Math.max(22, tokens.radiusPx + 6)}px`,
+          borderRadius: blockRadius,
+          padding: `${sp(40)}px ${sp(32)}px`,
         }}
       >
-        {/* Vitrine Central: Objeto de Design com Respiro Lateral Amplo */}
-        <div className="w-full max-w-[340px] flex flex-col gap-3.5 my-auto">
+        {/* Vitrine Central: Objeto de Design com Respiro Lateral Reativo */}
+        <div
+          className="w-full max-w-[340px] flex flex-col my-auto transition-all"
+          style={{ gap: `${sp(14)}px` }}
+        >
           {/* Card 1: Perfil VIP do Cliente */}
           {!isMinimal && (
             <div
@@ -69,7 +81,7 @@ export default defineBlock({
                 e.stopPropagation();
                 onSelectSubElement?.('profile-card');
               }}
-              className={`w-full p-3 px-3.5 border transition-all cursor-pointer flex items-center justify-between ${
+              className={`w-full border transition-all cursor-pointer flex items-center justify-between ${
                 selectedSubElementId === 'profile-card'
                   ? 'ring-2 ring-primary ring-offset-2'
                   : ''
@@ -78,13 +90,18 @@ export default defineBlock({
                 backgroundColor: cardBg,
                 borderColor: cardBorder,
                 borderRadius: cardRadius,
+                padding: `${sp(12)}px ${sp(16)}px`,
               }}
             >
-              <div className="flex items-center gap-3">
-                {/* Avatar da Cliente */}
+              <div className="flex items-center" style={{ gap: `${sp(12)}px` }}>
+                {/* Avatar da Cliente com raio e tamanho proporcionais */}
                 <div
-                  className="w-10 h-10 overflow-hidden shrink-0 flex items-center justify-center bg-zinc-200 dark:bg-zinc-700"
-                  style={{ borderRadius: `${Math.max(8, tokens.radiusPx - 4)}px` }}
+                  className="overflow-hidden shrink-0 flex items-center justify-center bg-zinc-200 dark:bg-zinc-700 transition-all"
+                  style={{
+                    width: `${fs(40)}px`,
+                    height: `${fs(40)}px`,
+                    borderRadius: avatarRadius,
+                  }}
                 >
                   {!imgFailed ? (
                     <img
@@ -94,34 +111,39 @@ export default defineBlock({
                       onError={() => setImgFailed(true)}
                     />
                   ) : (
-                    <span className="font-semibold text-xs text-zinc-600 dark:text-zinc-300">
+                    <span
+                      className="font-semibold text-zinc-600 dark:text-zinc-300"
+                      style={{ fontSize: `${fs(12)}px` }}
+                    >
                       AJ
                     </span>
                   )}
                 </div>
 
-                {/* Nome do Cliente */}
+                {/* Nome do Cliente com tipografia e escala de fonte reativas */}
                 <span
-                  className="text-base font-bold text-zinc-900 dark:text-zinc-100"
-                  style={headingStyle}
+                  className="font-bold text-zinc-900 dark:text-zinc-100 transition-all"
+                  style={{ ...headingStyle, fontSize: `${fs(15)}px` }}
                 >
                   Abigail Jefferson
                 </span>
               </div>
 
-              {/* Tag VIP reativa à cor primária da marca */}
+              {/* Tag VIP reativa à cor primária e raio da marca */}
               <div
                 onClick={(e) => {
                   e.stopPropagation();
                   onSelectSubElement?.('vip-badge');
                 }}
-                className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                className={`font-bold uppercase tracking-wider transition-all cursor-pointer ${
                   selectedSubElementId === 'vip-badge' ? 'ring-2 ring-primary' : ''
                 }`}
                 style={{
                   backgroundColor: brandColor,
                   color: vipTextColor,
                   borderRadius: innerRadius,
+                  padding: `${sp(4)}px ${sp(8)}px`,
+                  fontSize: `${fs(10)}px`,
                 }}
               >
                 VIP
@@ -135,7 +157,7 @@ export default defineBlock({
               e.stopPropagation();
               onSelectSubElement?.('chart-card');
             }}
-            className={`w-full p-6 border transition-all cursor-pointer flex flex-col gap-6 ${
+            className={`w-full border transition-all cursor-pointer flex flex-col ${
               selectedSubElementId === 'chart-card'
                 ? 'ring-2 ring-primary ring-offset-2'
                 : ''
@@ -143,32 +165,39 @@ export default defineBlock({
             style={{
               backgroundColor: cardBg,
               borderColor: cardBorder,
-              borderRadius: outerRadius,
+              borderRadius: cardRadius,
+              padding: `${sp(24)}px`,
+              gap: `${sp(20)}px`,
             }}
           >
             {/* Header Interno do Gráfico */}
-            <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center justify-between">
               <span
-                className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium tracking-tight"
-                style={bodyStyle}
+                className="text-zinc-500 dark:text-zinc-400 font-medium tracking-tight"
+                style={{ ...bodyStyle, fontSize: `${fs(11)}px` }}
               >
                 Predicted Customer Lifetime Value (CLV)
               </span>
 
               <span
-                className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5"
+                className="font-bold uppercase tracking-wider transition-all"
                 style={{
                   backgroundColor: isDark ? 'rgba(196, 181, 253, 0.15)' : '#F2EDFD',
                   color: isDark ? '#C4B5FD' : '#7846DF',
                   borderRadius: innerRadius,
+                  padding: `${sp(3)}px ${sp(8)}px`,
+                  fontSize: `${fs(10)}px`,
                 }}
               >
                 {tokens.brandName.toUpperCase()} AI
               </span>
             </div>
 
-            {/* Canvas do Gráfico com Linhas de Fundo */}
-            <div className="relative h-44 w-full flex flex-col justify-between pt-2">
+            {/* Canvas do Gráfico com Altura Escalada */}
+            <div
+              className="relative w-full flex flex-col justify-between pt-2"
+              style={{ height: `${sp(160)}px` }}
+            >
               {/* Linhas horizontais de grade (régua) */}
               <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
                 <div className="w-full h-[1px]" style={{ backgroundColor: gridLineColor }} />
@@ -177,13 +206,17 @@ export default defineBlock({
                 <div className="w-full h-[1px]" style={{ backgroundColor: gridLineColor }} />
               </div>
 
-              {/* 4 Colunas do Gráfico da Imagem */}
-              <div className="relative z-10 w-full h-full flex items-end justify-between gap-3 px-1">
+              {/* 4 Colunas do Gráfico com Gaps Proporcionais */}
+              <div
+                className="relative z-10 w-full h-full flex items-end justify-between px-1"
+                style={{ gap: `${sp(12)}px` }}
+              >
                 {/* Coluna 1: Baseline Sand/Beige */}
                 <div
                   className="flex-1 h-[42%] transition-all"
                   style={{
                     backgroundColor: isDark ? '#4A463F' : '#DCD6CD',
+                    borderRadius: `${Math.min(innerRadius ? parseInt(innerRadius) : 0, 4)}px`,
                   }}
                 />
 
@@ -192,11 +225,11 @@ export default defineBlock({
                   className="flex-1 h-[68%] transition-all relative overflow-hidden"
                   style={{
                     backgroundColor: isDark ? '#3D2F4E' : '#ECD2F6',
+                    borderRadius: `${Math.min(innerRadius ? parseInt(innerRadius) : 0, 4)}px`,
                   }}
                 >
-                  {/* Gradiente sutil coral/marca no topo como na referência */}
                   <div
-                    className="absolute inset-0 opacity-40"
+                    className="absolute inset-0 opacity-40 transition-all"
                     style={{
                       background: `linear-gradient(180deg, ${brandColor} 0%, transparent 70%)`,
                     }}
@@ -214,6 +247,7 @@ export default defineBlock({
                   }`}
                   style={{
                     backgroundColor: brandColor,
+                    borderRadius: `${Math.min(innerRadius ? parseInt(innerRadius) : 0, 4)}px`,
                   }}
                 />
 
@@ -222,6 +256,7 @@ export default defineBlock({
                   className="flex-1 h-[42%] transition-all"
                   style={{
                     backgroundColor: isDark ? '#2E4357' : '#A7D1ED',
+                    borderRadius: `${Math.min(innerRadius ? parseInt(innerRadius) : 0, 4)}px`,
                   }}
                 />
               </div>
