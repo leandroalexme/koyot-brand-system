@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   BrandTokens,
   SubElementStyleOverrides,
+  BrandPolicies,
 } from '../types';
 import {
   ShadcnPrimitiveId,
@@ -30,6 +31,7 @@ interface ShadcnExportModalProps {
     string,
     Record<string, SubElementStyleOverrides>
   >;
+  policies?: BrandPolicies;
   onClose: () => void;
   onChangePrimitiveId: (next: ShadcnPrimitiveId | 'all') => void;
 }
@@ -38,6 +40,7 @@ export const ShadcnExportModal: React.FC<ShadcnExportModalProps> = ({
   primitiveId,
   tokens,
   allPrimitiveOverrides,
+  policies,
   onClose,
   onChangePrimitiveId,
 }) => {
@@ -85,11 +88,12 @@ export const ShadcnExportModal: React.FC<ShadcnExportModalProps> = ({
         );
 
   const globalsCss = generateBrandGlobalsCss(tokens);
-  const skillMd = generateBrandSkillMd(tokens);
+  const skillMd = generateBrandSkillMd(tokens, policies);
   const registryJsonObj = buildShadcnRegistryItem(
     primitiveId,
     tokens,
-    allPrimitiveOverrides
+    allPrimitiveOverrides,
+    policies
   );
   const registryJsonString = JSON.stringify(registryJsonObj, null, 2);
 
@@ -99,19 +103,20 @@ export const ShadcnExportModal: React.FC<ShadcnExportModalProps> = ({
     const syncToBackend = async () => {
       try {
         const itemsPayload: Record<string, any> = {
-          all: buildShadcnRegistryItem('all', tokens, allPrimitiveOverrides),
+          all: buildShadcnRegistryItem('all', tokens, allPrimitiveOverrides, policies),
         };
         for (const item of SHADCN_PRIMITIVES_CATALOG) {
           itemsPayload[item.id] = buildShadcnRegistryItem(
             item.id,
             tokens,
-            allPrimitiveOverrides
+            allPrimitiveOverrides,
+            policies
           );
         }
         const res = await fetch('/r/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items: itemsPayload }),
+          body: JSON.stringify({ items: itemsPayload, policies }),
         });
         if (res.ok && !cancelled) {
           setRegistrySynced(true);

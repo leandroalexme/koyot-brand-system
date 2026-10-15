@@ -313,3 +313,13 @@ export interface HistoryTransaction {
   pagesBefore?: GuidelinePage[];
   pagesAfter?: GuidelinePage[];
 }
+
+export type OverrideScope = 'component' | 'instance';
+
+export interface BrandPolicies {
+  lockedTokens: Array<keyof BrandTokens>;
+  enforceWcagAA: boolean;
+  disallowArbitraryRadius: boolean;
+  disallowArbitraryFonts: boolean;
+  allowComponentOverrides: boolean;
+}

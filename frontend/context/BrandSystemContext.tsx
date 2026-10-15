@@ -22,11 +22,13 @@ import {
   SubElementStyleOverrides,
   ShadcnSingleBlockType,
   HistoryTransaction,
+  BrandPolicies,
 } from '../types';
 import {
   DEFAULT_BRAND_TOKENS,
   INITIAL_PAGES,
   BRAND_PRESETS,
+  DEFAULT_BRAND_POLICIES,
 } from '../constants';
 import {
   ShadcnPrimitiveId,
@@ -42,6 +44,20 @@ export interface BrandSystemContextValue {
   updateTokens: (updater: (prev: BrandTokens) => BrandTokens) => void;
   resetTokensToPreset: (presetName: string) => void;
   resetAllToDefault: () => void;
+
+  // Component Rules (KDS-04) - Canonical Design System Defaults
+  componentRules: Record<string, Record<string, SubElementStyleOverrides>>;
+  updateComponentRule: (
+    primitiveId: string,
+    partId: string,
+    patch: Partial<SubElementStyleOverrides>
+  ) => void;
+  resetComponentRule: (primitiveId: string, partId?: string) => void;
+
+  // Brand Policies (KDS-07) - Governance & Locks
+  policies: BrandPolicies;
+  updatePolicies: (patch: Partial<BrandPolicies>) => void;
+  isTokenLocked: (tokenKey: keyof BrandTokens) => boolean;
 
   // History & Batch Undo (KDS-05)
   history: HistoryTransaction[];
@@ -175,6 +191,43 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
   const [lastTransaction, setLastTransaction] =
     useState<HistoryTransaction | null>(null);
 
+  // Brand Policies (KDS-07)
+  const [policies, setPolicies] = useState<BrandPolicies>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.policies) {
+          return { ...DEFAULT_BRAND_POLICIES, ...parsed.policies };
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return DEFAULT_BRAND_POLICIES;
+  });
+
+  // Canonical Component Rules (KDS-04) - Single Source of Truth for Design System Defaults
+  const [componentRules, setComponentRules] = useState<
+    Record<string, Record<string, SubElementStyleOverrides>>
+  >(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (
+          parsed?.componentRules &&
+          Object.keys(parsed.componentRules).length > 0
+        ) {
+          return parsed.componentRules;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return {};
+  });
+
   // Debounced auto-save to localStorage
   const saveTimeoutRef = useRef<number | null>(null);
   useEffect(() => {
@@ -183,7 +236,7 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
       try {
         localStorage.setItem(
           STORAGE_KEY,
-          JSON.stringify({ tokens, pages })
+          JSON.stringify({ tokens, pages, componentRules, policies })
         );
       } catch {
         // quota exceeded or private mode
@@ -193,10 +246,15 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
     return () => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     };
-  }, [tokens, pages]);
+  }, [tokens, pages, componentRules, policies]);
 
-  // Compute all primitive sub-element overrides
+  // Compute canonical primitive overrides for the Shadcn Registry
   const allPrimitiveOverrides = useMemo(() => {
+    // If componentRules has entries, they are the canonical source of truth for the design system
+    if (Object.keys(componentRules).length > 0) {
+      return componentRules;
+    }
+    // Fallback migration from existing page blocks so zero user styles are lost
     const map: Record<string, Record<string, SubElementStyleOverrides>> = {};
     for (const page of pages) {
       for (const row of page.rows) {
@@ -220,7 +278,7 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
       }
     }
     return map;
-  }, [pages]);
+  }, [componentRules, pages]);
 
   // Auto-sync live Shadcn Registry to Backend (/r/sync) for CLI consumption
   useEffect(() => {
@@ -239,14 +297,14 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
         await fetch('/r/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items: itemsPayload }),
+          body: JSON.stringify({ items: itemsPayload, policies }),
         });
       } catch {
         // backend not reachable
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [tokens, allPrimitiveOverrides]);
+  }, [tokens, allPrimitiveOverrides, policies]);
 
   const activePage = useMemo(() => {
     return pages.find((p) => p.id === activePageId) || pages[0];
@@ -254,11 +312,91 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
 
   const activeMode: AppMode = activePage.mode;
 
+  const updatePolicies = useCallback((patch: Partial<BrandPolicies>) => {
+    setPolicies((prev) => ({ ...prev, ...patch }));
+  }, []);
+
+  const isTokenLocked = useCallback(
+    (tokenKey: keyof BrandTokens) => {
+      return policies.lockedTokens.includes(tokenKey);
+    },
+    [policies.lockedTokens]
+  );
+
   const updateTokens = useCallback(
     (updater: (prev: BrandTokens) => BrandTokens) => {
-      setTokens((prev) => updater(prev));
+      setTokens((prev) => {
+        const next = updater(prev);
+        // Protect locked tokens from unintended edits
+        if (policies.lockedTokens.length > 0) {
+          for (const key of policies.lockedTokens) {
+            if (next[key] !== prev[key]) {
+              (next as any)[key] = prev[key];
+            }
+          }
+        }
+        return next;
+      });
     },
-    []
+    [policies.lockedTokens]
+  );
+
+  const updateComponentRule = useCallback(
+    (
+      primitiveId: string,
+      partId: string,
+      patch: Partial<SubElementStyleOverrides>
+    ) => {
+      setComponentRules((prev) => {
+        const prevPrim = prev[primitiveId] || {};
+        const prevPart = prevPrim[partId] || {};
+        const updated = {
+          ...prev,
+          [primitiveId]: {
+            ...prevPrim,
+            [partId]: { ...prevPart, ...patch },
+          },
+        };
+        recordTransaction(
+          `Regra canônica do componente: ${primitiveId} (${partId})`,
+          tokens,
+          undefined,
+          'human'
+        );
+        return updated;
+      });
+    },
+    [tokens]
+  );
+
+  const resetComponentRule = useCallback(
+    (primitiveId: string, partId?: string) => {
+      setComponentRules((prev) => {
+        const prevPrim = { ...(prev[primitiveId] || {}) };
+        if (partId) {
+          delete prevPrim[partId];
+        } else {
+          const next = { ...prev };
+          delete next[primitiveId];
+          recordTransaction(
+            `Restaurar regra do componente: ${primitiveId}`,
+            tokens,
+            undefined,
+            'human'
+          );
+          return next;
+        }
+        const updated = { ...prev, [primitiveId]: prevPrim };
+        recordTransaction(
+          `Restaurar regra do componente: ${primitiveId} (${partId})`,
+          tokens,
+          undefined,
+          'human'
+        );
+        return updated;
+      });
+    },
+    [tokens]
   );
 
   const recordTransaction = useCallback(
@@ -268,25 +406,32 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
       nextPages?: GuidelinePage[],
       actorKind: 'human' | 'agent' | 'preset' | 'autofix' = 'human'
     ) => {
+      let effectiveNextTokens = nextTokens;
+      if (policies.lockedTokens.length > 0) {
+        effectiveNextTokens = { ...nextTokens };
+        for (const key of policies.lockedTokens) {
+          (effectiveNextTokens as any)[key] = tokens[key];
+        }
+      }
       const tx: HistoryTransaction = {
         id: `tx-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
         timestamp: Date.now(),
         actor: { kind: actorKind },
         description: desc,
         tokensBefore: tokens,
-        tokensAfter: nextTokens,
+        tokensAfter: effectiveNextTokens,
         pagesBefore: pages,
         pagesAfter: nextPages || pages,
       };
       setHistory((prev) => [tx, ...prev.slice(0, 49)]);
       setRedoStack([]);
       setLastTransaction(tx);
-      setTokens(nextTokens);
+      setTokens(effectiveNextTokens);
       if (nextPages) {
         setPages(nextPages);
       }
     },
-    [tokens, pages]
+    [tokens, pages, policies.lockedTokens]
   );
 
   const undo = useCallback(() => {
@@ -610,6 +755,12 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
       activeComponentId,
       setActiveComponentId,
       allPrimitiveOverrides,
+      componentRules,
+      updateComponentRule,
+      resetComponentRule,
+      policies,
+      updatePolicies,
+      isTokenLocked,
     }),
     [
       tokens,
@@ -644,6 +795,12 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
       exportModalPrimitive,
       activeComponentId,
       allPrimitiveOverrides,
+      componentRules,
+      updateComponentRule,
+      resetComponentRule,
+      policies,
+      updatePolicies,
+      isTokenLocked,
     ]
   );
 

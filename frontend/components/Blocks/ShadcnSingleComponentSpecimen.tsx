@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 
 // Real @base-ui/react + Koyot UI (systems/koyot) primitives & blocks
+import { useBrandSystem } from '../../context/BrandSystemContext';
 import { KoyotPortalProvider } from '../../systems/koyot/lib/portal';
 import {
   Accordion,
@@ -366,13 +367,20 @@ export const ShadcnSingleComponentSpecimen: React.FC<
       ? getReadableTextColor(tokens.primaryColor)
       : ds.neutrals[9];
 
+  const brandSys = useBrandSystem();
   const primitiveRegistrySlug = blockType.replace(/^ui-/, '');
+  const componentRuleOvr =
+    brandSys.componentRules?.[primitiveRegistrySlug] || {};
+  const effectiveSubElements = {
+    ...componentRuleOvr,
+    ...(block.subElements || {}),
+  };
 
   // Scoped CSS rules for `data-slot` inspector highlights & overrides
   const scopedSlotCss = buildBlockDataSlotCss(
     block.id,
     tokens,
-    block.subElements,
+    effectiveSubElements,
     isInspectMode ? hoveredSlot : null,
     selectedSlot || null
   );

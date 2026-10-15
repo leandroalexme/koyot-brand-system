@@ -57,6 +57,7 @@ function AppContent() {
     activeComponentId,
     setActiveComponentId,
     allPrimitiveOverrides,
+    policies,
     handleMoveRow,
     handleDeleteRow,
     handleUpdateBlock,
@@ -430,6 +431,7 @@ function AppContent() {
           primitiveId={exportModalPrimitive}
           tokens={tokens}
           allPrimitiveOverrides={allPrimitiveOverrides}
+          policies={policies}
           onClose={() => setExportModalPrimitive(null)}
           onChangePrimitiveId={(next) => setExportModalPrimitive(next)}
         />

@@ -4,7 +4,16 @@ import {
   BlockType,
   BlockCategory,
   ColorMoodPalette,
+  BrandPolicies,
 } from './types';
+
+export const DEFAULT_BRAND_POLICIES: BrandPolicies = {
+  lockedTokens: ['primaryColor'],
+  enforceWcagAA: true,
+  disallowArbitraryRadius: true,
+  disallowArbitraryFonts: true,
+  allowComponentOverrides: true,
+};
 
 export const COLOR_MOOD_PALETTES: ColorMoodPalette[] = [
   {

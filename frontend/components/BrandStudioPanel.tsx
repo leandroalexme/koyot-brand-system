@@ -67,6 +67,11 @@ import {
   ShieldCheck,
   Undo,
   Redo,
+  Lock,
+  Shield,
+  CheckCircle2,
+  AlertTriangle,
+  FileCode,
 } from 'lucide-react';
 
 import { useBrandSystem } from '../context/BrandSystemContext';
@@ -88,7 +93,7 @@ interface BrandStudioPanelProps {
   onOpenExportModal?: (primitiveId: ShadcnPrimitiveId | 'all') => void;
 }
 
-type StudioView = 'main' | 'edit' | 'audit';
+type StudioView = 'main' | 'edit' | 'audit' | 'policies';
 
 type EditSectionId =
   | 'colors'
@@ -169,6 +174,9 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
     }
   });
   const [studioView, setStudioView] = useState<StudioView>('main');
+  const [inspectorScope, setInspectorScope] = useState<'component' | 'instance'>(
+    'component'
+  );
   const [openEditSections, setOpenEditSections] = useState<
     Record<EditSectionId, boolean>
   >({
@@ -474,36 +482,79 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
       ? SHADCN_BLOCK_VARIANTS[selectedBlock.type as ShadcnSingleBlockType] || []
       : getBlockVariants(selectedBlock.type);
 
-    const currentOverrides: SubElementStyleOverrides = subId
+    const rawPartName =
+      subId && subId.includes(':') ? subId.split(':')[1] : subId;
+
+    const instanceOvr: SubElementStyleOverrides = subId
       ? selectedBlock.subElements?.[subId] || {}
       : selectedBlock.overrides || {};
+
+    const componentRuleOvr: SubElementStyleOverrides =
+      compositePrimitivePrefix && rawPartName
+        ? brandSys.componentRules[compositePrimitivePrefix]?.[rawPartName] || {}
+        : {};
+
+    const hasInstanceOverride = Object.keys(instanceOvr).length > 0;
+    const hasComponentRule = Object.keys(componentRuleOvr).length > 0;
+
+    // Based on inspectorScope, current overrides to display in controls
+    const currentOverrides: SubElementStyleOverrides =
+      inspectorScope === 'instance'
+        ? { ...componentRuleOvr, ...instanceOvr }
+        : componentRuleOvr;
 
     const updateTargetOverrides = (
       patch: Partial<SubElementStyleOverrides>
     ) => {
-      onUpdateBlock((blk) => {
-        if (subId) {
-          const prevSub = blk.subElements?.[subId] || {};
+      if (
+        inspectorScope === 'component' &&
+        compositePrimitivePrefix &&
+        rawPartName
+      ) {
+        brandSys.updateComponentRule(
+          compositePrimitivePrefix,
+          rawPartName,
+          patch
+        );
+      } else {
+        onUpdateBlock((blk) => {
+          if (subId) {
+            const prevSub = blk.subElements?.[subId] || {};
+            return {
+              ...blk,
+              subElements: {
+                ...(blk.subElements || {}),
+                [subId]: { ...prevSub, ...patch },
+              },
+            };
+          }
           return {
             ...blk,
-            subElements: {
-              ...(blk.subElements || {}),
-              [subId]: { ...prevSub, ...patch },
+            overrides: {
+              ...(blk.overrides || {}),
+              ...patch,
             },
           };
+        });
+      }
+    };
+
+    const handleResetInstanceOverride = () => {
+      onUpdateBlock((blk) => {
+        if (subId) {
+          const nextSubs = { ...(blk.subElements || {}) };
+          delete nextSubs[subId];
+          return { ...blk, subElements: nextSubs };
         }
-        return {
-          ...blk,
-          overrides: {
-            ...(blk.overrides || {}),
-            ...patch,
-          },
-        };
+        return { ...blk, overrides: undefined };
       });
     };
 
-    const rawPartName =
-      subId && subId.includes(':') ? subId.split(':')[1] : subId;
+    const handleResetComponentRule = () => {
+      if (compositePrimitivePrefix && rawPartName) {
+        brandSys.resetComponentRule(compositePrimitivePrefix, rawPartName);
+      }
+    };
 
     // Determine contextual defaults based on subElement or block
     const isTextTarget =
@@ -631,6 +682,81 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
                       {part.label}
                     </button>
                   ))}
+                </div>
+              )}
+
+              {/* KDS-04 Scope & Inheritance Selector */}
+              {compositePrimitivePrefix && rawPartName && (
+                <div className="mt-3 p-2.5 rounded-xl bg-[#1C1C1E] border border-white/[0.06] space-y-2">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-zinc-400 font-medium">Escopo de Edição</span>
+                    <div className="flex items-center gap-1.5">
+                      {hasInstanceOverride ? (
+                        <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-mono">
+                          Exceção Local
+                        </span>
+                      ) : hasComponentRule ? (
+                        <span className="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px] font-mono">
+                          Regra Canônica
+                        </span>
+                      ) : (
+                        <span className="px-1.5 py-0.5 rounded bg-white/10 text-zinc-300 text-[10px] font-mono">
+                          Padrão da Marca
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-1 p-0.5 rounded-lg bg-[#141416] text-xs">
+                    <button
+                      type="button"
+                      onClick={() => setInspectorScope('component')}
+                      className={`py-1 px-2 rounded-md transition text-center font-medium ${
+                        inspectorScope === 'component'
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      Design System
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setInspectorScope('instance')}
+                      className={`py-1 px-2 rounded-md transition text-center font-medium ${
+                        inspectorScope === 'instance'
+                          ? 'bg-amber-600 text-white shadow-sm'
+                          : 'text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      Esta Instância
+                    </button>
+                  </div>
+
+                  {(hasInstanceOverride || hasComponentRule) && (
+                    <div className="flex items-center justify-end pt-0.5">
+                      {hasInstanceOverride ? (
+                        <button
+                          type="button"
+                          onClick={handleResetInstanceOverride}
+                          className="text-[10px] text-amber-400 hover:text-amber-300 flex items-center gap-1 transition"
+                          title="Remover exceção local e herdar do Design System"
+                        >
+                          <RotateCcw className="w-2.5 h-2.5" />
+                          <span>Voltar à Regra Canônica</span>
+                        </button>
+                      ) : hasComponentRule ? (
+                        <button
+                          type="button"
+                          onClick={handleResetComponentRule}
+                          className="text-[10px] text-zinc-400 hover:text-white flex items-center gap-1 transition"
+                          title="Remover regra e herdar da Marca"
+                        >
+                          <RotateCcw className="w-2.5 h-2.5" />
+                          <span>Voltar ao Padrão da Marca</span>
+                        </button>
+                      ) : null}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -1249,6 +1375,14 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
                   >
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Audit</span>
+                  </button>
+                  <button
+                    onClick={() => setStudioView('policies')}
+                    className="px-2 py-1 rounded-lg text-xs text-zinc-300 hover:text-white hover:bg-white/[0.06] flex items-center gap-1.5 transition"
+                    title="Brand Policies & Governança (KDS-07)"
+                  >
+                    <Shield className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Policies</span>
                   </button>
                   <button
                     onClick={() => setStudioView('edit')}
@@ -2149,7 +2283,191 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
                 tokens={tokens}
                 onChangeTokens={onChangeTokens}
                 onRecordTransaction={brandSys.recordTransaction}
+                isTokenLocked={brandSys.isTokenLocked}
               />
+            </div>
+          )}
+
+          {studioView === 'policies' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setStudioView('main')}
+                    className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.06] transition"
+                    title="Voltar ao Theme"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
+                  <h3 className="text-sm font-medium text-white flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-blue-400" />
+                    <span>Brand Policies & Governança</span>
+                  </h3>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">
+                  KDS-07 Active
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                {/* 1. Trava de Cor Primária Institucional */}
+                <div className="p-3.5 rounded-2xl bg-[#1C1C1E] border border-white/[0.06] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Lock className="w-4 h-4 text-amber-400" />
+                      <span className="text-xs font-medium text-white">
+                        Travar Cor Primária Institucional
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const isLocked =
+                          brandSys.policies.lockedTokens.includes(
+                            'primaryColor'
+                          );
+                        const nextLocked = isLocked
+                          ? brandSys.policies.lockedTokens.filter(
+                              (k) => k !== 'primaryColor'
+                            )
+                          : [
+                              ...brandSys.policies.lockedTokens,
+                              'primaryColor' as keyof BrandTokens,
+                            ];
+                        brandSys.updatePolicies({ lockedTokens: nextLocked });
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                        brandSys.policies.lockedTokens.includes('primaryColor')
+                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                          : 'bg-white/10 text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      {brandSys.policies.lockedTokens.includes('primaryColor')
+                        ? 'Bloqueada'
+                        : 'Livre'}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                    Protege a cor primária contra alterações acidentais de
+                    agentes de IA, presets ou arrasto no Character Pad.
+                  </p>
+                </div>
+
+                {/* 2. Exigência de WCAG 2.2 AA */}
+                <div className="p-3.5 rounded-2xl bg-[#1C1C1E] border border-white/[0.06] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <span className="text-xs font-medium text-white">
+                        Conformidade WCAG 2.2 AA
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        brandSys.updatePolicies({
+                          enforceWcagAA: !brandSys.policies.enforceWcagAA,
+                        })
+                      }
+                      className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                        brandSys.policies.enforceWcagAA
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                          : 'bg-white/10 text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      {brandSys.policies.enforceWcagAA ? 'Ativa' : 'Opcional'}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                    Exige razão mínima de 4.5:1 em todos os pares de contraste
+                    de texto e componentes de ação.
+                  </p>
+                </div>
+
+                {/* 3. Restrição de Raios e Espaçamentos */}
+                <div className="p-3.5 rounded-2xl bg-[#1C1C1E] border border-white/[0.06] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Square className="w-4 h-4 text-indigo-400" />
+                      <span className="text-xs font-medium text-white">
+                        Raios Semânticos do Sistema
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        brandSys.updatePolicies({
+                          disallowArbitraryRadius:
+                            !brandSys.policies.disallowArbitraryRadius,
+                        })
+                      }
+                      className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                        brandSys.policies.disallowArbitraryRadius
+                          ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                          : 'bg-white/10 text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      {brandSys.policies.disallowArbitraryRadius
+                        ? 'Restrito'
+                        : 'Livre'}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                    Proíbe bordas com pixels arbitrários no código gerado,
+                    forçando tokens semânticos canônicos.
+                  </p>
+                </div>
+
+                {/* 4. Restrição de Fontes */}
+                <div className="p-3.5 rounded-2xl bg-[#1C1C1E] border border-white/[0.06] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <TypeIcon className="w-4 h-4 text-pink-400" />
+                      <span className="text-xs font-medium text-white">
+                        Governança Tipográfica
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        brandSys.updatePolicies({
+                          disallowArbitraryFonts:
+                            !brandSys.policies.disallowArbitraryFonts,
+                        })
+                      }
+                      className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                        brandSys.policies.disallowArbitraryFonts
+                          ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30'
+                          : 'bg-white/10 text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      {brandSys.policies.disallowArbitraryFonts
+                        ? 'Restrito'
+                        : 'Livre'}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                    Limita a geração de código apenas às 4 fontes aprovadas no
+                    contrato da marca.
+                  </p>
+                </div>
+
+                {/* Contrato JSON exportado para agentes */}
+                <div className="p-3 rounded-2xl bg-[#141416] border border-white/[0.06] space-y-1.5">
+                  <div className="flex items-center justify-between text-[11px] text-zinc-400">
+                    <span className="flex items-center gap-1.5 font-mono">
+                      <FileCode className="w-3.5 h-3.5 text-zinc-400" />
+                      <span>brand-policy.json</span>
+                    </span>
+                    <span className="text-[10px] text-zinc-500">
+                      Auto-sync /r/sync
+                    </span>
+                  </div>
+                  <pre className="text-[10px] font-mono text-zinc-300 p-2.5 rounded-xl bg-black/40 overflow-x-auto">
+                    {JSON.stringify(brandSys.policies, null, 2)}
+                  </pre>
+                </div>
+              </div>
             </div>
           )}
         </div>

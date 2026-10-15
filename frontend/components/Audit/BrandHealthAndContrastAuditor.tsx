@@ -17,17 +17,19 @@ import {
   Sliders,
   Layers,
   ArrowRight,
+  Lock,
 } from 'lucide-react';
 
 interface BrandHealthAndContrastAuditorProps {
   tokens: BrandTokens;
   onChangeTokens: (next: BrandTokens) => void;
   onRecordTransaction?: (desc: string, nextTokens: BrandTokens) => void;
+  isTokenLocked?: (tokenKey: keyof BrandTokens) => boolean;
 }
 
 export const BrandHealthAndContrastAuditor: React.FC<
   BrandHealthAndContrastAuditorProps
-> = ({ tokens, onChangeTokens, onRecordTransaction }) => {
+> = ({ tokens, onChangeTokens, onRecordTransaction, isTokenLocked }) => {
   const neutrals = getNeutralRamp10(tokens.neutralTone);
   const metrics = getUnifiedDesignMetrics(tokens);
 
@@ -212,17 +214,27 @@ export const BrandHealthAndContrastAuditor: React.FC<
                   </div>
 
                   {!isAA && pair.targetType && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleAutoFixContrast(pair.targetType!, pair.bg)
-                      }
-                      title="Ajustar luminância automaticamente para atingir AA (4.5:1)"
-                      className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition text-[10px] flex items-center gap-1"
-                    >
-                      <Sparkles className="w-3 h-3" />
-                      <span>Fix</span>
-                    </button>
+                    isTokenLocked?.(pair.targetType) ? (
+                      <span
+                        title="Cor institucional protegida por Brand Policy (KDS-07)"
+                        className="px-2 py-1 rounded-lg bg-zinc-800 text-amber-300 border border-amber-500/20 text-[10px] flex items-center gap-1 cursor-not-allowed"
+                      >
+                        <Lock className="w-2.5 h-2.5 text-amber-400" />
+                        <span>Locked</span>
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleAutoFixContrast(pair.targetType!, pair.bg)
+                        }
+                        title="Ajustar luminância automaticamente para atingir AA (4.5:1)"
+                        className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition text-[10px] flex items-center gap-1"
+                      >
+                        <Sparkles className="w-3 h-3" />
+                        <span>Fix</span>
+                      </button>
+                    )
                   )}
                 </div>
               </div>

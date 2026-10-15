@@ -1,6 +1,7 @@
 import {
   BrandTokens,
   SubElementStyleOverrides,
+  BrandPolicies,
 } from '../types';
 import {
   hexToHsl,
@@ -214,11 +215,18 @@ export function mergeClass<State>(
  * Generates an Agent \`SKILL.md\` file tailored to the user's live BrandTokens
  * so AI coding agents follow the brand's rules, tokens, and verified component contracts.
  */
-export function generateBrandSkillMd(tokens: BrandTokens): string {
+export function generateBrandSkillMd(
+  tokens: BrandTokens,
+  policies?: BrandPolicies
+): string {
   const slug = tokens.brandName.toLowerCase().replace(/\s+/g, '-');
   const uiFont = getFontFamilyByRole(tokens, 'ui');
   const brandFont = getFontFamilyByRole(tokens, 'brand');
   const dataFont = getFontFamilyByRole(tokens, 'data');
+
+  const lockedTokensList = policies?.lockedTokens?.length
+    ? policies.lockedTokens.join(', ')
+    : 'None';
 
   return `---
 name: ${slug}
@@ -244,6 +252,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   );
 }
 \`\`\`
+
+## Brand Governance & Policies (KDS-07)
+- **Institutional Locked Tokens**: \`${lockedTokensList}\` (Do NOT alter these core brand assets without owner approval).
+- **WCAG 2.2 AA Enforcement**: ${
+    policies?.enforceWcagAA !== false
+      ? 'STRICT (All text-to-background contrast pairs MUST be >= 4.5:1)'
+      : 'Advisory'
+  }.
+- **Radius Scale Constraint**: ${
+    policies?.disallowArbitraryRadius !== false
+      ? 'STRICT (Only use canonical semantic radius classes: rounded-none, rounded-sm, rounded-md, rounded-lg, rounded-full. Never use arbitrary pixels like rounded-[13px])'
+      : 'Flexible'
+  }.
+- **Font Scale Constraint**: ${
+    policies?.disallowArbitraryFonts !== false
+      ? 'STRICT (Use only designated font families: var(--font-brand), var(--font-ui), var(--font-data))'
+      : 'Flexible'
+  }.
 
 ## Global Rules
 1. **${slug}-components-first (MUST)**: Use a verified ${tokens.brandName} primitive from \`@/components/ui/*\` (Button, Input, Dialog, Slider) before writing custom markup.
@@ -724,7 +750,8 @@ export function buildShadcnRegistryItem(
   allPrimitiveOverrides: Record<
     string,
     Record<string, SubElementStyleOverrides>
-  > = {}
+  > = {},
+  policies?: BrandPolicies
 ): ShadcnRegistryItemJson {
   const neutrals = getNeutralRamp10(tokens.neutralTone);
   const fgOnPrimary = getReadableTextColor(tokens.primaryColor);
@@ -813,8 +840,17 @@ export function buildShadcnRegistryItem(
       path: '.agents/skills/brand-system/SKILL.md',
       target: '.agents/skills/brand-system/SKILL.md',
       type: 'registry:ui' as const,
-      content: generateBrandSkillMd(tokens),
+      content: generateBrandSkillMd(tokens, policies),
     });
+
+    if (policies) {
+      files.push({
+        path: 'brand-policy.json',
+        target: 'brand-policy.json',
+        type: 'registry:ui' as const,
+        content: JSON.stringify(policies, null, 2),
+      });
+    }
 
     return {
       $schema: 'https://ui.shadcn.com/schema/registry-item.json',
