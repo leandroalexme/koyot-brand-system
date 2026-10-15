@@ -50,9 +50,10 @@ export const AddBlockModal: React.FC = () => {
     return getUnifiedBlockCatalog().filter((item) => {
       const matchesCategory =
         selectedCategory === 'all' || item.category === selectedCategory;
-      const matchesQuery =
-        item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const label = (item.label || item.name || '').toLowerCase();
+      const desc = (item.description || '').toLowerCase();
+      const query = searchQuery.trim().toLowerCase();
+      const matchesQuery = !query || label.includes(query) || desc.includes(query);
       return matchesCategory && matchesQuery;
     });
   }, [selectedCategory, searchQuery]);
@@ -100,6 +101,7 @@ export const AddBlockModal: React.FC = () => {
               'identity',
               'typography',
               'color',
+              'mockups',
               'applications',
               'rules',
               'content',

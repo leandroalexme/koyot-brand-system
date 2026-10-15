@@ -3,6 +3,8 @@ import { BLOCK_CATALOG } from '../../constants';
 
 export interface CatalogItem {
   id: string;
+  type: string;
+  label: string;
   name: string;
   category: string;
   description: string;
@@ -46,17 +48,21 @@ export function getBlockById(id: string): BlockDefinition<any> | undefined {
  */
 export function getUnifiedBlockCatalog(): CatalogItem[] {
   const builtIns: CatalogItem[] = BLOCK_CATALOG.map((item) => ({
-    id: item.id,
-    name: item.name,
+    id: item.type,
+    type: item.type,
+    label: item.label,
+    name: item.label,
     category: item.category,
-    description: item.description,
-    defaultLayout: item.defaultLayout,
+    description: item.description || '',
+    defaultLayout: '2-col-50-50',
     isCustomBlock: false,
   }));
 
   const custom: CatalogItem[] = Array.from(customBlocksMap.values()).map(
     (b) => ({
       id: b.id,
+      type: b.id,
+      label: b.title,
       name: b.title,
       category: b.category,
       description: b.description || 'Bloco customizado de marca',
