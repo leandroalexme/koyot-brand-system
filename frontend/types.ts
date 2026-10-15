@@ -298,3 +298,18 @@ export interface GuidelinePage {
   description: string;
   rows: EditorialRow[];
 }
+
+export interface HistoryTransaction {
+  id: string;
+  timestamp: number;
+  actor: {
+    kind: 'human' | 'agent' | 'preset' | 'autofix';
+    name?: string;
+  };
+  description: string;
+  summary?: string;
+  tokensBefore: BrandTokens;
+  tokensAfter: BrandTokens;
+  pagesBefore?: GuidelinePage[];
+  pagesAfter?: GuidelinePage[];
+}

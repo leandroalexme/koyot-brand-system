@@ -21,6 +21,7 @@ import {
   SelectedInspectorTarget,
   SubElementStyleOverrides,
   ShadcnSingleBlockType,
+  HistoryTransaction,
 } from '../types';
 import {
   DEFAULT_BRAND_TOKENS,
@@ -41,6 +42,21 @@ export interface BrandSystemContextValue {
   updateTokens: (updater: (prev: BrandTokens) => BrandTokens) => void;
   resetTokensToPreset: (presetName: string) => void;
   resetAllToDefault: () => void;
+
+  // History & Batch Undo (KDS-05)
+  history: HistoryTransaction[];
+  canUndo: boolean;
+  canRedo: boolean;
+  lastTransaction: HistoryTransaction | null;
+  undo: () => void;
+  redo: () => void;
+  recordTransaction: (
+    desc: string,
+    nextTokens: BrandTokens,
+    nextPages?: GuidelinePage[],
+    actorKind?: 'human' | 'agent' | 'preset' | 'autofix'
+  ) => void;
+  clearLastTransaction: () => void;
 
   // Pages & Bento Rows
   pages: GuidelinePage[];
@@ -153,6 +169,12 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
     ShadcnPrimitiveId | 'all' | null
   >(null);
 
+  // History & Batch Undo (KDS-05)
+  const [history, setHistory] = useState<HistoryTransaction[]>([]);
+  const [redoStack, setRedoStack] = useState<HistoryTransaction[]>([]);
+  const [lastTransaction, setLastTransaction] =
+    useState<HistoryTransaction | null>(null);
+
   // Debounced auto-save to localStorage
   const saveTimeoutRef = useRef<number | null>(null);
   useEffect(() => {
@@ -239,22 +261,122 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
     []
   );
 
-  const resetTokensToPreset = useCallback((presetName: string) => {
-    const preset = BRAND_PRESETS[presetName];
-    if (preset) {
-      setTokens({ ...preset });
-    }
+  const recordTransaction = useCallback(
+    (
+      desc: string,
+      nextTokens: BrandTokens,
+      nextPages?: GuidelinePage[],
+      actorKind: 'human' | 'agent' | 'preset' | 'autofix' = 'human'
+    ) => {
+      const tx: HistoryTransaction = {
+        id: `tx-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        timestamp: Date.now(),
+        actor: { kind: actorKind },
+        description: desc,
+        tokensBefore: tokens,
+        tokensAfter: nextTokens,
+        pagesBefore: pages,
+        pagesAfter: nextPages || pages,
+      };
+      setHistory((prev) => [tx, ...prev.slice(0, 49)]);
+      setRedoStack([]);
+      setLastTransaction(tx);
+      setTokens(nextTokens);
+      if (nextPages) {
+        setPages(nextPages);
+      }
+    },
+    [tokens, pages]
+  );
+
+  const undo = useCallback(() => {
+    setHistory((prev) => {
+      if (prev.length === 0) return prev;
+      const [tx, ...rest] = prev;
+      setRedoStack((r) => [tx, ...r]);
+      setTokens(tx.tokensBefore);
+      if (tx.pagesBefore) {
+        setPages(tx.pagesBefore);
+      }
+      setLastTransaction(null);
+      return rest;
+    });
   }, []);
 
+  const redo = useCallback(() => {
+    setRedoStack((prev) => {
+      if (prev.length === 0) return prev;
+      const [tx, ...rest] = prev;
+      setHistory((h) => [tx, ...h]);
+      setTokens(tx.tokensAfter);
+      if (tx.pagesAfter) {
+        setPages(tx.pagesAfter);
+      }
+      setLastTransaction(tx);
+      return rest;
+    });
+  }, []);
+
+  const clearLastTransaction = useCallback(() => {
+    setLastTransaction(null);
+  }, []);
+
+  const canUndo = history.length > 0;
+  const canRedo = redoStack.length > 0;
+
+  // Global Keyboard Shortcuts (Cmd+Z / Ctrl+Z, Shift+Cmd+Z)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const isInput =
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable);
+      if (isInput) return;
+
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        if (e.shiftKey) {
+          redo();
+        } else {
+          undo();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, redo]);
+
+  const resetTokensToPreset = useCallback(
+    (presetName: string) => {
+      const preset = BRAND_PRESETS[presetName];
+      if (preset) {
+        recordTransaction(
+          `Preset aplicado: ${presetName}`,
+          { ...preset },
+          undefined,
+          'preset'
+        );
+      }
+    },
+    [recordTransaction]
+  );
+
   const resetAllToDefault = useCallback(() => {
-    setTokens(DEFAULT_BRAND_TOKENS);
-    setPages(INITIAL_PAGES);
+    recordTransaction(
+      'Restaurar padrões de fábrica',
+      DEFAULT_BRAND_TOKENS,
+      INITIAL_PAGES,
+      'human'
+    );
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch {
       // ignore
     }
-  }, []);
+  }, [recordTransaction]);
 
   const toggleCanvasAppearance = useCallback(() => {
     setCanvasDarkAppearance((prev) => !prev);
@@ -451,6 +573,14 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
       updateTokens,
       resetTokensToPreset,
       resetAllToDefault,
+      history,
+      canUndo,
+      canRedo,
+      lastTransaction,
+      undo,
+      redo,
+      recordTransaction,
+      clearLastTransaction,
       pages,
       activePageId,
       activePage,
@@ -486,6 +616,14 @@ export const BrandSystemProvider: React.FC<{ children: ReactNode }> = ({
       updateTokens,
       resetTokensToPreset,
       resetAllToDefault,
+      history,
+      canUndo,
+      canRedo,
+      lastTransaction,
+      undo,
+      redo,
+      recordTransaction,
+      clearLastTransaction,
       pages,
       activePageId,
       activePage,

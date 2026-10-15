@@ -64,10 +64,14 @@ import {
   Scan,
   Trash2,
   Terminal,
+  ShieldCheck,
+  Undo,
+  Redo,
 } from 'lucide-react';
 
 import { useBrandSystem } from '../context/BrandSystemContext';
 import { getBlockSubElements, getBlockVariants } from '../sdk/block';
+import { BrandHealthAndContrastAuditor } from './Audit/BrandHealthAndContrastAuditor';
 
 interface BrandStudioPanelProps {
   tokens?: BrandTokens;
@@ -84,7 +88,7 @@ interface BrandStudioPanelProps {
   onOpenExportModal?: (primitiveId: ShadcnPrimitiveId | 'all') => void;
 }
 
-type StudioView = 'main' | 'edit';
+type StudioView = 'main' | 'edit' | 'audit';
 
 type EditSectionId =
   | 'colors'
@@ -247,6 +251,14 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
     } catch {
       // ignore
     }
+    if (brandSys.recordTransaction) {
+      brandSys.recordTransaction(
+        `Character pad: ${tokens.headingWeight}w · ${tokens.radiusPx}px`,
+        tokens,
+        undefined,
+        'human'
+      );
+    }
   };
 
   const handleSelectColorMood = (mood: ColorMoodPalette) => {
@@ -263,7 +275,16 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
       tokens.characterY,
       newBase
     );
-    onChangeTokens(nextTokens);
+    if (brandSys.recordTransaction) {
+      brandSys.recordTransaction(
+        `Color Mood: ${mood.name}`,
+        nextTokens,
+        undefined,
+        'preset'
+      );
+    } else {
+      onChangeTokens(nextTokens);
+    }
   };
 
   const handleCustomHexChange = (hex: string) => {
@@ -1161,6 +1182,37 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
       <div className="bg-[#111112] text-white rounded-[28px] shadow-2xl border border-white/[0.06] overflow-hidden">
         {/* Inner scroll area with hidden native scrollbar */}
         <div className="p-5 max-h-[calc(100vh-3rem)] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          {/* Action Receipt / Transaction Toast (KDS-05) */}
+          {brandSys.lastTransaction && (
+            <div className="mb-4 p-2.5 rounded-xl bg-[#1C1C1E] border border-white/10 flex items-center justify-between gap-2.5 text-xs shadow-lg animate-in fade-in">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+                <span className="text-zinc-200 truncate font-medium">
+                  {brandSys.lastTransaction.description}
+                </span>
+              </div>
+              <div className="flex items-center gap-1 shrink-0">
+                <button
+                  type="button"
+                  onClick={brandSys.undo}
+                  className="px-2 py-0.5 rounded-md bg-white/10 hover:bg-white/20 text-white font-medium flex items-center gap-1 transition"
+                  title="Desfazer (Cmd+Z)"
+                >
+                  <Undo className="w-3 h-3" />
+                  <span>Desfazer</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={brandSys.clearLastTransaction}
+                  className="p-1 text-zinc-400 hover:text-white transition"
+                  title="Fechar"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            </div>
+          )}
+
           {studioView === 'main' && (
             <div className="space-y-4">
               {/* Clean Header */}
@@ -1168,11 +1220,35 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
                 <h3 className="text-sm font-medium text-white">Theme</h3>
                 <div className="flex items-center gap-1">
                   <button
+                    onClick={brandSys.undo}
+                    disabled={!brandSys.canUndo}
+                    title="Desfazer lote (Cmd+Z)"
+                    className="p-1.5 rounded-lg text-zinc-400 hover:text-white disabled:opacity-20 disabled:pointer-events-none transition"
+                  >
+                    <Undo className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={brandSys.redo}
+                    disabled={!brandSys.canRedo}
+                    title="Refazer lote (Cmd+Shift+Z)"
+                    className="p-1.5 rounded-lg text-zinc-400 hover:text-white disabled:opacity-20 disabled:pointer-events-none transition"
+                  >
+                    <Redo className="w-3.5 h-3.5" />
+                  </button>
+                  <button
                     onClick={onResetTokens}
                     title="Restore defaults"
                     className="p-1.5 rounded-lg text-zinc-500 hover:text-white transition"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => setStudioView('audit')}
+                    className="px-2 py-1 rounded-lg text-xs text-zinc-300 hover:text-white hover:bg-white/[0.06] flex items-center gap-1.5 transition"
+                    title="Auditoria de Contraste WCAG 2.2 e Controles"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Audit</span>
                   </button>
                   <button
                     onClick={() => setStudioView('edit')}
@@ -2030,6 +2106,50 @@ export const BrandStudioPanel: React.FC<BrandStudioPanelProps> = (props) => {
                   )}
                 </div>
               </div>
+            </div>
+          )}
+
+          {studioView === 'audit' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setStudioView('main')}
+                    className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.06] transition"
+                    title="Voltar ao Theme"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
+                  <h3 className="text-sm font-medium text-white flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                    <span>Brand Health & WCAG 2.2</span>
+                  </h3>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={brandSys.undo}
+                    disabled={!brandSys.canUndo}
+                    title="Desfazer lote (Cmd+Z)"
+                    className="p-1.5 rounded-lg text-zinc-400 hover:text-white disabled:opacity-20 disabled:pointer-events-none transition"
+                  >
+                    <Undo className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={brandSys.redo}
+                    disabled={!brandSys.canRedo}
+                    title="Refazer lote (Cmd+Shift+Z)"
+                    className="p-1.5 rounded-lg text-zinc-400 hover:text-white disabled:opacity-20 disabled:pointer-events-none transition"
+                  >
+                    <Redo className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              <BrandHealthAndContrastAuditor
+                tokens={tokens}
+                onChangeTokens={onChangeTokens}
+                onRecordTransaction={brandSys.recordTransaction}
+              />
             </div>
           )}
         </div>
