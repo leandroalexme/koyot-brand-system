@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { defineBlock } from '../../sdk/block';
 import { getReadableTextColor } from '../../utils/styleUtils';
 
@@ -7,13 +7,14 @@ export default defineBlock({
   title: 'Customer Lifetime Value (CLV)',
   category: 'mockups',
   description:
-    'Widget analítico e preditivo de valor de cliente (CLV), reativo à cor da marca, tipografia e raios.',
+    'Mockup de inteligência preditiva de cliente apresentado em vitrine com respiro lateral e 4 colunas analíticas.',
   defaultLayout: '2-col-50-50',
-  variants: ['Default', 'Brand Surface', 'Dark'] as const,
+  variants: ['Default', 'Minimal'] as const,
   subElements: [
-    { id: 'customer-identity', label: 'Identidade do Cliente', category: 'Typography' },
-    { id: 'clv-metric', label: 'Métrica de Valor Previsto', category: 'Data' },
-    { id: 'bars-matrix', label: 'Matriz Comparativa', category: 'Data Visualization' },
+    { id: 'profile-card', label: 'Card do Perfil VIP', category: 'Surfaces' },
+    { id: 'chart-card', label: 'Card do Gráfico Preditivo', category: 'Surfaces' },
+    { id: 'vip-badge', label: 'Badge VIP', category: 'Badges' },
+    { id: 'predicted-bar', label: 'Barra Prevista (CLV)', category: 'Data Visualization' },
   ],
   render: ({
     tokens,
@@ -22,38 +23,13 @@ export default defineBlock({
     onSelectSubElement,
     isDark = false,
   }) => {
-    const isBrandSurface = activeVariant === 'Brand Surface';
-    const isDarkMode = activeVariant === 'Dark' || isDark;
+    const [imgFailed, setImgFailed] = useState(false);
+    const isMinimal = activeVariant === 'Minimal';
 
     const brandColor = tokens.primaryColor;
-    const accentColor = tokens.accentColor || brandColor;
-    const secondaryColor = tokens.secondaryColor || tokens.supportColor;
+    const vipTextColor = getReadableTextColor(brandColor);
 
-    // Fundo do Bloco: ou Branco limpo, ou preenchimento sólido do token da marca, ou Dark
-    const bgColor = isBrandSurface
-      ? accentColor
-      : isDarkMode
-      ? '#09090b'
-      : '#ffffff';
-
-    const textColor = isBrandSurface
-      ? getReadableTextColor(accentColor)
-      : isDarkMode
-      ? '#f4f4f5'
-      : '#09090b';
-
-    const subtleTextColor = isBrandSurface
-      ? `${textColor}99`
-      : isDarkMode
-      ? '#a1a1aa'
-      : '#71717a';
-
-    const borderColor = isBrandSurface
-      ? `${textColor}20`
-      : isDarkMode
-      ? 'rgba(255,255,255,0.08)'
-      : 'rgba(0,0,0,0.06)';
-
+    // Tipografia da marca
     const headingStyle: React.CSSProperties = {
       fontFamily: tokens.headingFont,
       fontWeight: tokens.headingWeight || 600,
@@ -65,159 +41,190 @@ export default defineBlock({
       fontWeight: tokens.bodyWeight || 400,
     };
 
+    // Raio reativo
+    const outerRadius = `${Math.max(16, tokens.radiusPx + 4)}px`;
+    const cardRadius = `${Math.max(14, tokens.radiusPx)}px`;
+    const innerRadius = `${Math.max(4, tokens.radiusPx - 8)}px`;
+
+    // Superfície de Vitrine Neutra (como em um showroom/exposição de marca)
+    const showcaseBg = isDark ? '#18181b' : '#E8E8E8';
+    const cardBg = isDark ? '#242427' : '#FFFFFF';
+    const cardBorder = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)';
+    const gridLineColor = isDark ? 'rgba(255,255,255,0.06)' : '#F0F0F0';
+
     return (
       <div
-        className="w-full h-full flex flex-col justify-between p-8 sm:p-10 rounded-[24px] overflow-hidden select-none transition-colors duration-200 border border-border/40"
+        className="w-full h-full flex flex-col items-center justify-center p-6 sm:p-10 select-none transition-colors duration-200 overflow-hidden relative"
         style={{
-          backgroundColor: bgColor,
-          color: textColor,
-          borderRadius: `${Math.max(20, tokens.radiusPx + 4)}px`,
+          backgroundColor: showcaseBg,
+          borderRadius: `${Math.max(22, tokens.radiusPx + 6)}px`,
         }}
       >
-        {/* Topo: Identidade do Cliente e Tag de Status */}
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelectSubElement?.('customer-identity');
-          }}
-          className={`flex items-baseline justify-between pb-6 border-b cursor-pointer transition-all ${
-            selectedSubElementId === 'customer-identity' ? 'opacity-80' : ''
-          }`}
-          style={{ borderColor }}
-        >
-          <div>
-            <span
-              className="text-[10px] font-mono uppercase tracking-[0.18em]"
-              style={{ color: subtleTextColor }}
-            >
-              Customer Identity // 0842
-            </span>
-            <h3 className="text-xl sm:text-2xl mt-1 leading-tight" style={headingStyle}>
-              Clara Albuquerque
-            </h3>
-          </div>
-
-          <div className="text-right">
-            <span
-              className="text-[11px] font-mono tracking-wider uppercase font-semibold"
-              style={{ color: isBrandSurface ? textColor : brandColor }}
-            >
-              {tokens.brandName} VIP
-            </span>
-            <div className="text-[10px] font-mono mt-0.5" style={{ color: subtleTextColor }}>
-              Coorte Q2 2023
-            </div>
-          </div>
-        </div>
-
-        {/* Meio: Métrica Central CLV em Destaque Editorial */}
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelectSubElement?.('clv-metric');
-          }}
-          className={`my-auto py-6 cursor-pointer transition-all ${
-            selectedSubElementId === 'clv-metric' ? 'opacity-80' : ''
-          }`}
-        >
-          <div
-            className="text-[11px] font-mono uppercase tracking-[0.2em]"
-            style={{ color: subtleTextColor }}
-          >
-            Predicted Lifetime Value
-          </div>
-          <div className="flex items-baseline gap-3 mt-1.5">
-            <span
-              className="text-4xl sm:text-5xl leading-none font-bold tracking-tight"
-              style={headingStyle}
-            >
-              R$ 14.850
-            </span>
-            <span
-              className="text-xs font-mono font-semibold px-2 py-0.5 rounded-full"
+        {/* Vitrine Central: Objeto de Design com Respiro Lateral Amplo */}
+        <div className="w-full max-w-[340px] flex flex-col gap-3.5 my-auto">
+          {/* Card 1: Perfil VIP do Cliente */}
+          {!isMinimal && (
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectSubElement?.('profile-card');
+              }}
+              className={`w-full p-3 px-3.5 border transition-all cursor-pointer flex items-center justify-between ${
+                selectedSubElementId === 'profile-card'
+                  ? 'ring-2 ring-primary ring-offset-2'
+                  : ''
+              }`}
               style={{
-                backgroundColor: isBrandSurface
-                  ? `${textColor}25`
-                  : `${brandColor}18`,
-                color: isBrandSurface ? textColor : brandColor,
+                backgroundColor: cardBg,
+                borderColor: cardBorder,
+                borderRadius: cardRadius,
               }}
             >
-              +182% YoY
-            </span>
-          </div>
-        </div>
+              <div className="flex items-center gap-3">
+                {/* Avatar da Cliente */}
+                <div
+                  className="w-10 h-10 overflow-hidden shrink-0 flex items-center justify-center bg-zinc-200 dark:bg-zinc-700"
+                  style={{ borderRadius: `${Math.max(8, tokens.radiusPx - 4)}px` }}
+                >
+                  {!imgFailed ? (
+                    <img
+                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80"
+                      alt="Abigail Jefferson"
+                      className="w-full h-full object-cover"
+                      onError={() => setImgFailed(true)}
+                    />
+                  ) : (
+                    <span className="font-semibold text-xs text-zinc-600 dark:text-zinc-300">
+                      AJ
+                    </span>
+                  )}
+                </div>
 
-        {/* Base: Gráfico Minimalista Direto na Prancheta */}
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelectSubElement?.('bars-matrix');
-          }}
-          className="pt-6 border-t cursor-pointer"
-          style={{ borderColor }}
-        >
-          <div className="grid grid-cols-4 gap-4 items-end h-20">
-            {/* Barra 1 */}
-            <div className="flex flex-col gap-2 h-full justify-end">
-              <div
-                className="w-full transition-all"
-                style={{
-                  height: '38%',
-                  backgroundColor: isBrandSurface ? `${textColor}40` : `${brandColor}35`,
-                  borderRadius: `${Math.min(4, tokens.radiusPx)}px`,
-                }}
-              />
-              <span className="text-[10px] font-mono" style={{ color: subtleTextColor }}>
-                Base
-              </span>
-            </div>
+                {/* Nome do Cliente */}
+                <span
+                  className="text-base font-bold text-zinc-900 dark:text-zinc-100"
+                  style={headingStyle}
+                >
+                  Abigail Jefferson
+                </span>
+              </div>
 
-            {/* Barra 2 */}
-            <div className="flex flex-col gap-2 h-full justify-end">
+              {/* Tag VIP reativa à cor primária da marca */}
               <div
-                className="w-full transition-all"
-                style={{
-                  height: '58%',
-                  backgroundColor: isBrandSurface ? `${textColor}60` : secondaryColor,
-                  borderRadius: `${Math.min(4, tokens.radiusPx)}px`,
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelectSubElement?.('vip-badge');
                 }}
-              />
-              <span className="text-[10px] font-mono" style={{ color: subtleTextColor }}>
-                Médio
-              </span>
-            </div>
-
-            {/* Barra 3 - Previsto (Destaque) */}
-            <div className="flex flex-col gap-2 h-full justify-end">
-              <div
-                className="w-full transition-all"
+                className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  selectedSubElementId === 'vip-badge' ? 'ring-2 ring-primary' : ''
+                }`}
                 style={{
-                  height: '95%',
-                  backgroundColor: isBrandSurface ? textColor : brandColor,
-                  borderRadius: `${Math.min(4, tokens.radiusPx)}px`,
+                  backgroundColor: brandColor,
+                  color: vipTextColor,
+                  borderRadius: innerRadius,
                 }}
-              />
-              <span
-                className="text-[10px] font-mono font-semibold"
-                style={{ color: isBrandSurface ? textColor : brandColor }}
               >
-                Previsto
+                VIP
+              </div>
+            </div>
+          )}
+
+          {/* Card 2: Gráfico Analítico de CLV */}
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelectSubElement?.('chart-card');
+            }}
+            className={`w-full p-6 border transition-all cursor-pointer flex flex-col gap-6 ${
+              selectedSubElementId === 'chart-card'
+                ? 'ring-2 ring-primary ring-offset-2'
+                : ''
+            }`}
+            style={{
+              backgroundColor: cardBg,
+              borderColor: cardBorder,
+              borderRadius: outerRadius,
+            }}
+          >
+            {/* Header Interno do Gráfico */}
+            <div className="flex items-center justify-between text-xs">
+              <span
+                className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium tracking-tight"
+                style={bodyStyle}
+              >
+                Predicted Customer Lifetime Value (CLV)
+              </span>
+
+              <span
+                className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5"
+                style={{
+                  backgroundColor: isDark ? 'rgba(196, 181, 253, 0.15)' : '#F2EDFD',
+                  color: isDark ? '#C4B5FD' : '#7846DF',
+                  borderRadius: innerRadius,
+                }}
+              >
+                {tokens.brandName.toUpperCase()} AI
               </span>
             </div>
 
-            {/* Barra 4 */}
-            <div className="flex flex-col gap-2 h-full justify-end">
-              <div
-                className="w-full transition-all"
-                style={{
-                  height: '48%',
-                  backgroundColor: isBrandSurface ? `${textColor}25` : `${textColor}20`,
-                  borderRadius: `${Math.min(4, tokens.radiusPx)}px`,
-                }}
-              />
-              <span className="text-[10px] font-mono" style={{ color: subtleTextColor }}>
-                Coorte
-              </span>
+            {/* Canvas do Gráfico com Linhas de Fundo */}
+            <div className="relative h-44 w-full flex flex-col justify-between pt-2">
+              {/* Linhas horizontais de grade (régua) */}
+              <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+                <div className="w-full h-[1px]" style={{ backgroundColor: gridLineColor }} />
+                <div className="w-full h-[1px]" style={{ backgroundColor: gridLineColor }} />
+                <div className="w-full h-[1px]" style={{ backgroundColor: gridLineColor }} />
+                <div className="w-full h-[1px]" style={{ backgroundColor: gridLineColor }} />
+              </div>
+
+              {/* 4 Colunas do Gráfico da Imagem */}
+              <div className="relative z-10 w-full h-full flex items-end justify-between gap-3 px-1">
+                {/* Coluna 1: Baseline Sand/Beige */}
+                <div
+                  className="flex-1 h-[42%] transition-all"
+                  style={{
+                    backgroundColor: isDark ? '#4A463F' : '#DCD6CD',
+                  }}
+                />
+
+                {/* Coluna 2: Lavanda com gradiente suave */}
+                <div
+                  className="flex-1 h-[68%] transition-all relative overflow-hidden"
+                  style={{
+                    backgroundColor: isDark ? '#3D2F4E' : '#ECD2F6',
+                  }}
+                >
+                  {/* Gradiente sutil coral/marca no topo como na referência */}
+                  <div
+                    className="absolute inset-0 opacity-40"
+                    style={{
+                      background: `linear-gradient(180deg, ${brandColor} 0%, transparent 70%)`,
+                    }}
+                  />
+                </div>
+
+                {/* Coluna 3: Barra Destaque Previsto (Cor Primária da Marca) */}
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectSubElement?.('predicted-bar');
+                  }}
+                  className={`flex-1 h-[95%] transition-all cursor-pointer ${
+                    selectedSubElementId === 'predicted-bar' ? 'scale-[1.02]' : ''
+                  }`}
+                  style={{
+                    backgroundColor: brandColor,
+                  }}
+                />
+
+                {/* Coluna 4: Soft Sky Blue Benchmark */}
+                <div
+                  className="flex-1 h-[42%] transition-all"
+                  style={{
+                    backgroundColor: isDark ? '#2E4357' : '#A7D1ED',
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
