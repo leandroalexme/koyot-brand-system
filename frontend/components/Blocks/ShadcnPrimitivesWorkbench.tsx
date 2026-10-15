@@ -130,8 +130,11 @@ export const ShadcnPrimitivesWorkbench: React.FC<
       activeSubKey === key ||
       (primitiveId === 'slider' && activeSubKey === partId);
     const isHovered = hoveredSubKey === key;
-    if (isSelected || isHovered) {
-      return 'ring-1 ring-[#D946EF]';
+    if (isSelected) {
+      return 'ring-1.5 ring-zinc-900 dark:ring-white shadow-sm';
+    }
+    if (isHovered) {
+      return 'ring-1 ring-zinc-400/50 dark:ring-zinc-600/50';
     }
     return '';
   };

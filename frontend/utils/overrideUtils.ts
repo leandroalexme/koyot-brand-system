@@ -411,12 +411,12 @@ export function buildBlockDataSlotCss(
 
   if (hoveredSlot && hoveredSlot !== selectedSlot) {
     rules.push(
-      `[data-koyot-block="${blockId}"] [data-slot="${hoveredSlot}"] { outline: 1px dashed #D946EF !important; outline-offset: 2px !important; }`
+      `[data-koyot-block="${blockId}"] [data-slot="${hoveredSlot}"] { outline: 1px dashed rgba(120, 120, 128, 0.45) !important; outline-offset: 2px !important; }`
     );
   }
   if (selectedSlot) {
     rules.push(
-      `[data-koyot-block="${blockId}"] [data-slot="${selectedSlot}"] { outline: 1.5px solid #D946EF !important; outline-offset: 2px !important; }`
+      `[data-koyot-block="${blockId}"] [data-slot="${selectedSlot}"] { outline: 1.5px solid #2563EB !important; outline-offset: 2px !important; }`
     );
   }
 

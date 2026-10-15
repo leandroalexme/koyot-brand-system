@@ -435,7 +435,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
                   className={`px-3.5 py-1.5 text-xs flex items-center gap-2 transition-all ${
                     isInspectMode ? 'cursor-pointer' : ''
                   } ${
-                    selectedPart === 'badge' ? 'ring-2 ring-[#D946EF]' : ''
+                    selectedPart === 'badge' ? 'ring-1.5 ring-zinc-900 dark:ring-white shadow-sm' : ''
                   }`}
                   style={{
                     backgroundColor: badgeOvr?.fillToken
@@ -479,7 +479,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
                 className={`leading-[1.04] my-6 rounded px-1 -mx-1 transition ${headlineFont} ${
                   isInspectMode ? 'cursor-pointer' : ''
                 } ${
-                  selectedPart === 'headline' ? 'ring-1 ring-[#D946EF]' : ''
+                  selectedPart === 'headline' ? 'ring-1.5 ring-zinc-900 dark:ring-white shadow-sm' : ''
                 }`}
                 style={{
                   fontSize: `${
@@ -518,7 +518,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
                 className={`opacity-75 max-w-2xl rounded px-1 -mx-1 transition ${bodyFont} ${
                   isInspectMode ? 'cursor-pointer' : ''
                 } ${
-                  selectedPart === 'body' ? 'ring-1 ring-[#D946EF]' : ''
+                  selectedPart === 'body' ? 'ring-1.5 ring-zinc-900 dark:ring-white shadow-sm' : ''
                 }`}
                 style={{
                   fontSize: `${

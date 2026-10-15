@@ -56,22 +56,19 @@ export const TopBrandBar: React.FC = () => {
               <BrandLogoMark logoId={tokens.logoId} color="#FFFFFF" size={18} />
             </div>
             <div className="hidden sm:block">
-              <span className="text-sm font-bold text-zinc-900 dark:text-white tracking-tight block leading-tight">
+              <span className="text-sm font-semibold text-zinc-900 dark:text-white tracking-tight">
                 {tokens.brandName}
-              </span>
-              <span className="text-[11px] text-zinc-400 font-mono block leading-none">
-                Living Brand OS
               </span>
             </div>
           </div>
 
-          <div className="h-4 w-[1px] bg-zinc-200 dark:bg-zinc-800 hidden sm:block" />
+          <div className="h-4 w-[1px] bg-zinc-200/80 dark:bg-zinc-800/80 hidden sm:block" />
 
           {/* Quick Preset Selector */}
           <select
             value={tokens.stylePresetName}
             onChange={(e) => resetTokensToPreset(e.target.value)}
-            className="text-xs font-medium text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200/70 dark:hover:bg-zinc-800 rounded-lg px-2.5 py-1.5 border border-zinc-200/60 dark:border-zinc-800 cursor-pointer transition focus:outline-none"
+            className="text-xs font-medium text-zinc-600 dark:text-zinc-300 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-lg px-2 py-1 border border-zinc-200/60 dark:border-zinc-800 cursor-pointer transition focus:outline-none"
             title="Mudar Preset de Marca"
           >
             {Object.keys(BRAND_PRESETS).map((presetKey) => {
@@ -86,7 +83,7 @@ export const TopBrandBar: React.FC = () => {
         </div>
 
         {/* Center Section: Segmented Mode Selector */}
-        <nav className="flex items-center bg-zinc-100/90 dark:bg-zinc-900/90 p-1 rounded-xl border border-zinc-200/60 dark:border-zinc-800 shadow-inner">
+        <nav className="flex items-center bg-zinc-100/80 dark:bg-zinc-900/80 p-0.5 rounded-xl border border-zinc-200/60 dark:border-zinc-800/60">
           <button
             onClick={() => handleSwitchMode('overview')}
             className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition ${
@@ -127,7 +124,7 @@ export const TopBrandBar: React.FC = () => {
         {/* Right Section: Actions, Inspect Pill, Studio & Theme */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Dual Play / Inspect Switcher */}
-          <div className="flex items-center bg-zinc-100 dark:bg-zinc-900 p-0.5 rounded-xl border border-zinc-200/60 dark:border-zinc-800">
+          <div className="flex items-center bg-zinc-100 dark:bg-zinc-900 p-0.5 rounded-xl border border-zinc-200/60 dark:border-zinc-800/60">
             <button
               onClick={() => {
                 setIsInspectMode(false);
@@ -147,7 +144,7 @@ export const TopBrandBar: React.FC = () => {
               onClick={() => setIsInspectMode(true)}
               className={`px-2.5 py-1 rounded-lg flex items-center gap-1 text-xs font-medium transition ${
                 isInspectMode
-                  ? 'bg-[#D946EF] text-white shadow-sm'
+                  ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-sm'
                   : 'text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
               }`}
               title="Modo de Inspeção (Editar tokens por elemento)"
@@ -173,30 +170,17 @@ export const TopBrandBar: React.FC = () => {
           {/* CLI Registry Export Button */}
           <button
             onClick={() => setExportModalPrimitive('all')}
-            className="px-2.5 py-1.5 rounded-xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:opacity-90 flex items-center gap-1.5 text-xs font-medium shadow-sm transition"
+            className="px-2.5 py-1 rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 border border-zinc-200/60 dark:border-zinc-800/80 hover:bg-zinc-200/70 dark:hover:bg-zinc-800 flex items-center gap-1.5 text-xs font-medium transition"
             title="Exportar Shadcn Registry CLI"
           >
-            <Terminal className="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600" />
+            <Terminal className="w-3.5 h-3.5 opacity-70" />
             <span className="hidden lg:inline">CLI</span>
-          </button>
-
-          {/* Reset All to Default */}
-          <button
-            onClick={() => {
-              if (window.confirm('Deseja restaurar todas as configurações e blocos para o padrão original?')) {
-                resetAllToDefault();
-              }
-            }}
-            className="p-1.5 rounded-xl text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition hidden sm:flex"
-            title="Restaurar Padrão da Marca"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
           </button>
 
           {/* Brand Studio Toggle Button */}
           <button
             onClick={() => setStudioOpen(!studioOpen)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 border transition ${
+            className={`px-2.5 py-1 rounded-xl text-xs font-medium flex items-center gap-1.5 border transition ${
               studioOpen
                 ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-sm'
                 : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-200 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50'

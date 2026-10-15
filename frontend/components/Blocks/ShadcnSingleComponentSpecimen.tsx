@@ -1961,7 +1961,7 @@ export const ShadcnSingleComponentSpecimen: React.FC<
             title={`Inspect ${block.title} properties`}
             className={`w-7 h-7 rounded-full flex items-center justify-center transition ${
               isBlockSelected
-                ? 'bg-[#D946EF] text-white'
+                ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 shadow-sm'
                 : isDarkTheme
                 ? 'bg-[#232326] text-zinc-200 hover:bg-[#2E2E32]'
                 : 'bg-[#F3F3F1] text-zinc-700 hover:bg-zinc-200/80'

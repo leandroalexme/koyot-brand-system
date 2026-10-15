@@ -201,10 +201,11 @@ export const ShadcnSliderAnatomySpecimen: React.FC<SpecimenProps> = ({
               isInspectMode ? 'cursor-pointer' : ''
             } ${
               interactive &&
-              (selectedPart === 'label' ||
-                (isInspectMode && hoveredPart === 'label'))
-                ? 'ring-1 ring-[#D946EF]'
-                : ''
+              (selectedPart === 'label'
+                ? 'ring-1.5 ring-zinc-900 dark:ring-white shadow-sm'
+                : isInspectMode && hoveredPart === 'label'
+                ? 'ring-1 ring-zinc-400/50 dark:ring-zinc-600/50'
+                : '')
             }`}
             style={{
               fontSize: `${labelMetrics.fontSizePx}px`,
@@ -237,12 +238,13 @@ export const ShadcnSliderAnatomySpecimen: React.FC<SpecimenProps> = ({
           onMouseLeave={() => interactive && setHoveredPart(null)}
           className={`relative p-2.5 -mx-2.5 cursor-pointer transition ${
             interactive &&
-            (selectedPart === 'track' ||
-              (isInspectMode &&
+            (selectedPart === 'track'
+              ? 'ring-1.5 ring-zinc-900 dark:ring-white shadow-sm'
+              : isInspectMode &&
                 hoveredPart === 'track' &&
-                hoveredPart !== 'thumb'))
-              ? 'ring-1 ring-[#D946EF]'
-              : ''
+                hoveredPart !== 'thumb'
+              ? 'ring-1 ring-zinc-400/50 dark:ring-zinc-600/50'
+              : '')
           }`}
         >
           <div
@@ -295,10 +297,11 @@ export const ShadcnSliderAnatomySpecimen: React.FC<SpecimenProps> = ({
                 }}
                 className={`relative p-2 -m-2 flex items-center justify-center cursor-pointer ${
                   interactive &&
-                  (selectedPart === 'thumb' ||
-                    (isInspectMode && hoveredPart === 'thumb'))
-                    ? 'ring-1 ring-[#D946EF]'
-                    : ''
+                  (selectedPart === 'thumb'
+                    ? 'ring-1.5 ring-zinc-900 dark:ring-white shadow-sm'
+                    : isInspectMode && hoveredPart === 'thumb'
+                    ? 'ring-1 ring-zinc-400/50 dark:ring-zinc-600/50'
+                    : '')
                 }`}
               >
                 <div
@@ -331,11 +334,6 @@ export const ShadcnSliderAnatomySpecimen: React.FC<SpecimenProps> = ({
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-zinc-800">Default</span>
           <div className="flex items-center gap-2">
-            {isInspectMode && (
-              <span className="text-[10px] text-[#D946EF] bg-[#D946EF]/10 px-2 py-0.5 rounded-full font-medium">
-                Click Label, Track or Thumb to inspect
-              </span>
-            )}
             <button
               type="button"
               onClick={(e) => {
@@ -513,7 +511,7 @@ export const ShadcnPaymentWidgetSpecimen: React.FC<SpecimenProps> = ({
             }
           }}
           className={`relative z-10 transition ${shadowClass} ${
-            selectedPart === 'card' ? 'ring-2 ring-[#D946EF]' : ''
+            selectedPart === 'card' ? 'ring-1.5 ring-zinc-900 dark:ring-white shadow-sm' : ''
           }`}
           style={{
             backgroundColor: cardBg,
@@ -540,7 +538,7 @@ export const ShadcnPaymentWidgetSpecimen: React.FC<SpecimenProps> = ({
               className={`min-w-0 rounded px-1 -ml-1 transition ${
                 isInspectMode ? 'cursor-pointer' : ''
               } ${
-                selectedPart === 'balance' ? 'ring-1 ring-[#D946EF]' : ''
+                selectedPart === 'balance' ? 'ring-1.5 ring-zinc-900 dark:ring-white shadow-sm' : ''
               }`}
             >
               <div
@@ -609,7 +607,7 @@ export const ShadcnPaymentWidgetSpecimen: React.FC<SpecimenProps> = ({
 
           <KoyotButton
             variant={tokens.stylePresetName === 'Lime' ? 'glow' : 'primary'}
-            className={`w-full ${selectedPart === 'pay-button' ? 'ring-2 ring-[#D946EF]' : ''}`}
+            className={`w-full ${selectedPart === 'pay-button' ? 'ring-1.5 ring-zinc-900 dark:ring-white shadow-sm' : ''}`}
             onClick={(e) => {
               e.stopPropagation();
               if (isInspectMode && onSelectSubElement) {
@@ -805,7 +803,7 @@ export const ShadcnNavigationPreviewSpecimen: React.FC<SpecimenProps> = ({
             } border-r border-zinc-200/60 flex flex-col justify-between shrink-0 transition-all ${
               isInspectMode ? 'cursor-pointer' : ''
             } ${
-              selectedPart === 'sidebar' ? 'ring-2 ring-[#D946EF]' : ''
+              selectedPart === 'sidebar' ? 'ring-1.5 ring-zinc-900 dark:ring-white shadow-sm' : ''
             }`}
             style={{ padding: `${Math.round(14 * tokens.spacingMultiplier)}px` }}
           >
@@ -860,7 +858,7 @@ export const ShadcnNavigationPreviewSpecimen: React.FC<SpecimenProps> = ({
                       }}
                       className={`w-full flex items-center justify-between px-3 transition-colors ${
                         isActive && selectedPart === 'nav-item'
-                          ? 'ring-2 ring-[#D946EF]'
+                          ? 'ring-1.5 ring-zinc-900 dark:ring-white shadow-sm'
                           : ''
                       }`}
                       style={{
@@ -950,7 +948,7 @@ export const ShadcnNavigationPreviewSpecimen: React.FC<SpecimenProps> = ({
             }
           }}
           className={`rounded-xl p-1 -m-1 transition ${
-            selectedPart === 'input' ? 'ring-1 ring-[#D946EF]' : ''
+            selectedPart === 'input' ? 'ring-1.5 ring-zinc-900 dark:ring-white shadow-sm' : ''
           }`}
         >
           <KoyotField>
