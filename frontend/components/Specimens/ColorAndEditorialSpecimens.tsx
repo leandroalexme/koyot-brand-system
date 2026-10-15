@@ -232,7 +232,7 @@ export const SocialCardPosterSpecimen: React.FC<SpecimenProps> = ({ tokens, bloc
 
     return (
       <div
-        className="rounded-[24px] min-h-[420px] flex flex-col justify-between relative overflow-hidden transition-colors duration-200"
+        className="rounded-[24px] min-h-[420px] h-full flex flex-col justify-between relative overflow-hidden transition-colors duration-200"
         style={{
           backgroundColor: tokens.primaryColor,
           color: fgColor,

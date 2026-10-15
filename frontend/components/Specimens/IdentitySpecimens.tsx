@@ -436,7 +436,7 @@ export const DosAndDontsSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
   ];
 
   return (
-    <div className="bg-white rounded-[24px] p-8 md:p-10">
+    <div className="bg-white rounded-[24px] p-8 md:p-10 h-full flex flex-col justify-between">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {rules.map((rule, idx) => (
           <div key={idx} className="space-y-4">

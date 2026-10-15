@@ -46,7 +46,7 @@ export const LogotypeScalingSpecimen: React.FC<SpecimenProps> = ({ tokens }) => 
 
   return (
     <div
-      className="bg-white rounded-[24px] flex flex-col justify-between"
+      className="bg-white rounded-[24px] flex flex-col justify-between h-full"
       style={{ padding: `${Math.round(36 * tokens.spacingMultiplier)}px` }}
     >
       <div className="flex items-center gap-2 pb-5 border-b border-zinc-100">
@@ -98,7 +98,7 @@ export const BrandLockupMatrixSpecimen: React.FC<SpecimenProps> = ({ tokens }) =
   const shortBrand = tokens.brandName.split(' ')[0];
 
   return (
-    <div className="bg-white rounded-[24px] overflow-hidden grid grid-cols-12 h-[440px]">
+    <div className="bg-white rounded-[24px] overflow-hidden grid grid-cols-12 min-h-[440px] h-full">
       {/* Left 6 columns: 2x2 + Bottom Horizontal Lockup */}
       <div className="col-span-6 grid grid-rows-2">
         <div className="grid grid-cols-2">
@@ -205,7 +205,7 @@ export const IconGridInspectorSpecimen: React.FC<SpecimenProps> = ({ tokens }) =
   return (
     <div
       onClick={() => setActiveIdx((activeIdx + 1) % items.length)}
-      className="bg-white rounded-[24px] flex flex-col justify-between h-[440px] cursor-pointer select-none"
+      className="bg-white rounded-[24px] flex flex-col justify-between min-h-[420px] h-full cursor-pointer select-none"
       style={{ padding: `${Math.round(32 * tokens.spacingMultiplier)}px` }}
     >
       {/* Minimalist Top Bar */}
@@ -298,7 +298,7 @@ export const MotionIconMorphSpecimen: React.FC<SpecimenProps> = ({ tokens }) => 
   return (
     <div
       onClick={() => setStage(((stage + 1) % 3) as 0 | 1 | 2)}
-      className="rounded-[24px] p-10 h-[440px] flex flex-col items-center justify-center relative overflow-hidden cursor-pointer select-none transition-colors duration-300"
+      className="rounded-[24px] p-10 min-h-[420px] h-full flex flex-col items-center justify-center relative overflow-hidden cursor-pointer select-none transition-colors duration-300"
       style={{ backgroundColor: tokens.darkSurface, color: '#FFFFFF' }}
     >
       <div
@@ -794,7 +794,7 @@ export const IosHomescreenMockupSpecimen: React.FC<SpecimenProps> = ({ tokens })
 
   return (
     <div
-      className="rounded-[24px] pt-10 pl-10 overflow-hidden h-[420px] flex items-end justify-end transition-colors duration-300"
+      className="rounded-[24px] pt-10 pl-10 overflow-hidden min-h-[420px] h-full flex items-end justify-end transition-colors duration-300"
       style={{ backgroundColor: tokens.secondaryColor }}
     >
       {/* Macro iPhone Top-Left Bezel */}
@@ -870,7 +870,7 @@ export const BrowserFaviconMockupSpecimen: React.FC<SpecimenProps> = ({ tokens }
 
   return (
     <div
-      className="rounded-[24px] pt-10 pl-10 overflow-hidden h-[420px] flex flex-col justify-end transition-colors duration-300"
+      className="rounded-[24px] pt-10 pl-10 overflow-hidden min-h-[420px] h-full flex flex-col justify-end transition-colors duration-300"
       style={{ backgroundColor: tokens.darkSurface }}
     >
       <div className="bg-[#E4E4E7] rounded-tl-[28px] overflow-hidden shadow-2xl flex-1 flex flex-col">
@@ -941,7 +941,7 @@ export const SocialProfileMockupSpecimen: React.FC<SpecimenProps> = ({
   if (block.theme === 'brand') {
     return (
       <div
-        className="rounded-[24px] p-10 h-[420px] flex items-center justify-center transition-colors duration-200"
+        className="rounded-[24px] p-10 min-h-[420px] h-full flex items-center justify-center transition-colors duration-200"
         style={{ backgroundColor: tokens.primaryColor }}
       >
         <div
@@ -983,7 +983,7 @@ export const SocialProfileMockupSpecimen: React.FC<SpecimenProps> = ({
 
   return (
     <div
-      className="rounded-[24px] pt-8 pl-8 overflow-hidden h-[420px] flex flex-col justify-end transition-colors duration-200"
+      className="rounded-[24px] pt-8 pl-8 overflow-hidden min-h-[420px] h-full flex flex-col justify-end transition-colors duration-200"
       style={{ backgroundColor: tokens.surfaceTint }}
     >
       <div
@@ -1078,7 +1078,7 @@ export const DetachedPillNavSpecimen: React.FC<SpecimenProps> = ({ tokens }) => 
 
   return (
     <div
-      className="rounded-[24px] p-10 min-h-[420px] flex items-center justify-center transition-colors duration-200"
+      className="rounded-[24px] p-10 min-h-[420px] h-full flex items-center justify-center transition-colors duration-200"
       style={{ backgroundColor: tokens.surfaceTint }}
     >
       <div

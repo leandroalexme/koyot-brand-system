@@ -493,7 +493,7 @@ export const ShadcnPaymentWidgetSpecimen: React.FC<SpecimenProps> = ({
       {slotCss && <style>{slotCss}</style>}
       <KoyotPortalProvider>
       {/* Fixed Koyot Bento Card (rounded-[24px]) */}
-      <div className="bg-[#E5E5E7] rounded-[24px] p-5 sm:p-6 pt-8 relative overflow-hidden">
+      <div className="bg-[#E5E5E7] rounded-[24px] p-5 sm:p-6 pt-8 relative overflow-hidden flex-1 flex flex-col justify-between">
         {/* Inner Brand Accent Tab */}
         <div
           className="h-5 mx-6 -mb-2 transition-colors duration-200"
