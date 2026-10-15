@@ -549,10 +549,17 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
 
   if (wrapperStyle) {
     return (
-      <div style={wrapperStyle} className="h-full flex flex-col">
+      <div
+        style={wrapperStyle}
+        className="w-full h-full min-h-0 flex flex-col flex-1 overflow-hidden"
+      >
         {renderContent()}
       </div>
     );
   }
-  return renderContent();
+  return (
+    <div className="w-full h-full min-h-0 flex flex-col flex-1 overflow-hidden">
+      {renderContent()}
+    </div>
+  );
 };

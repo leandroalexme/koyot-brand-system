@@ -17,7 +17,7 @@ export const ProportionalArtboard: React.FC<ProportionalArtboardProps> = ({
   className = '',
 }) => {
   return (
-    <div className={`w-full h-full flex flex-col flex-1 ${className}`}>
+    <div className={`w-full h-full min-h-0 flex flex-col flex-1 overflow-hidden ${className}`}>
       {children}
     </div>
   );

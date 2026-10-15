@@ -23,48 +23,70 @@ interface SpecimenProps {
 
 export const ColorProportionSpecimen: React.FC<SpecimenProps> = ({ tokens }) => {
   const neutralRamp = getNeutralRamp(tokens.neutralTone);
+  const sp = (basePx: number) => Math.round(basePx * (tokens.spacingMultiplier || 1));
 
   return (
     <div
-      className="bg-white rounded-[24px] flex flex-col justify-between h-full"
-      style={{ padding: `${Math.round(28 * tokens.spacingMultiplier)}px` }}
+      className="bg-white rounded-[24px] flex flex-col justify-between h-full w-full min-h-0 overflow-hidden"
+      style={{ padding: `${sp(28)}px`, gap: `${sp(16)}px` }}
     >
-      {/* 4-Part Proportional Palette Bar */}
+      <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-zinc-400">
+        <span>Color Proportion · 60/30/10</span>
+        <span>{tokens.brandName} Palette</span>
+      </div>
+
+      {/* 4-Part Proportional Palette Bar that stretches to fill height without empty space */}
       <div
-        className="w-full h-44 md:h-52 overflow-hidden flex transition-all duration-150"
+        className="w-full flex-1 min-h-[180px] overflow-hidden flex transition-all duration-150"
         style={{ borderRadius: `${tokens.radiusPx}px` }}
       >
         <div
-          className="h-full transition-colors duration-200"
+          className="h-full transition-colors duration-200 p-4 flex flex-col justify-end"
           style={{ width: '58%', backgroundColor: tokens.primaryColor }}
           title={`Primary: ${tokens.primaryColor}`}
-        />
+        >
+          <span className="text-[11px] font-mono font-bold" style={{ color: getReadableTextColor(tokens.primaryColor) }}>
+            58% Primary
+          </span>
+        </div>
         <div
-          className="h-full transition-colors duration-200"
+          className="h-full transition-colors duration-200 p-3 flex flex-col justify-end"
           style={{ width: '14%', backgroundColor: tokens.supportColor }}
           title={`Support: ${tokens.supportColor}`}
-        />
+        >
+          <span className="text-[10px] font-mono font-medium truncate" style={{ color: getReadableTextColor(tokens.supportColor) }}>
+            14%
+          </span>
+        </div>
         <div
-          className="h-full transition-colors duration-200"
+          className="h-full transition-colors duration-200 p-3 flex flex-col justify-end"
           style={{ width: '14%', backgroundColor: tokens.secondaryColor }}
           title={`Secondary: ${tokens.secondaryColor}`}
-        />
+        >
+          <span className="text-[10px] font-mono font-medium truncate" style={{ color: getReadableTextColor(tokens.secondaryColor) }}>
+            14%
+          </span>
+        </div>
         <div
-          className="h-full transition-colors duration-200"
+          className="h-full transition-colors duration-200 p-3 flex flex-col justify-end"
           style={{ width: '14%', backgroundColor: tokens.accentColor }}
           title={`Accent: ${tokens.accentColor}`}
-        />
+        >
+          <span className="text-[10px] font-mono font-medium truncate" style={{ color: getReadableTextColor(tokens.accentColor) }}>
+            14%
+          </span>
+        </div>
       </div>
 
       {/* Bottom Neutral Ramp */}
       <div
-        className="mt-4 grid grid-cols-8 h-8 overflow-hidden transition-all duration-150"
+        className="grid grid-cols-8 h-10 overflow-hidden transition-all duration-150 shrink-0"
         style={{ borderRadius: `${Math.min(tokens.radiusPx, 12)}px` }}
       >
         {neutralRamp.map((hex) => (
           <div
             key={hex}
-            className="h-full transition-colors duration-200"
+            className="h-full transition-colors duration-200 flex items-center justify-center"
             style={{ backgroundColor: hex }}
           />
         ))}
@@ -140,8 +162,8 @@ export const OutdoorBillboardSpecimen: React.FC<SpecimenProps> = ({ tokens }) =>
   const [line1, line2, line3] = tokens.brandCopy.billboardHeadline;
 
   return (
-    <div className="relative overflow-hidden bg-[#E5E5E7] rounded-[24px] p-8 md:p-14">
-      <div className="relative max-w-4xl mx-auto bg-zinc-950 p-3 rounded-2xl shadow-2xl">
+    <div className="relative overflow-hidden bg-[#E5E5E7] rounded-[24px] p-6 sm:p-8 md:p-10 w-full h-full min-h-0 flex flex-col justify-center">
+      <div className="relative max-w-4xl mx-auto w-full bg-zinc-950 p-3 rounded-2xl shadow-2xl">
         <div
           className="rounded-xl bg-[#F5F5F7] grid grid-cols-1 md:grid-cols-12 gap-8 items-center"
           style={{ padding: `${Math.round(36 * tokens.spacingMultiplier)}px` }}

@@ -90,7 +90,7 @@ export const ResizableComponentFrame: React.FC<ResizableComponentFrameProps> = (
       : { width: '100%' };
 
   return (
-    <div ref={wrapperRef} className="w-full h-full relative group/frame">
+    <div ref={wrapperRef} className="w-full h-full min-h-0 flex flex-col relative group/frame overflow-hidden">
       {/* Subtle Viewport Width Bar on Hover */}
       {maxAvailableWidth > 380 && (
         <div
@@ -147,7 +147,7 @@ export const ResizableComponentFrame: React.FC<ResizableComponentFrameProps> = (
       <div
         ref={frameRef}
         style={activeWidthStyle}
-        className={`h-full relative ${
+        className={`h-full min-h-0 flex flex-col relative overflow-hidden ${
           isDragging ? '' : 'transition-[width] duration-200 ease-out'
         }`}
       >

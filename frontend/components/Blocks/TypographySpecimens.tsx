@@ -22,7 +22,7 @@ export const TypographySculptureSpecimen: React.FC<SpecimenProps> = ({ tokens, b
   if (block.theme === 'brand') {
     return (
       <div
-        className="rounded-[24px] p-10 min-h-[420px] h-full flex flex-col justify-between text-center transition-colors duration-200"
+        className="rounded-[24px] w-full h-full min-h-0 overflow-hidden flex flex-col justify-between text-center transition-colors duration-200"
         style={{
           backgroundColor: tokens.accentColor,
           color: getReadableTextColor(tokens.accentColor),
@@ -65,7 +65,7 @@ export const TypographySculptureSpecimen: React.FC<SpecimenProps> = ({ tokens, b
   }
 
   return (
-    <div className="bg-white rounded-[24px] p-7 min-h-[320px] h-full flex flex-col justify-between">
+    <div className="bg-white rounded-[24px] p-6 sm:p-7 w-full h-full min-h-0 overflow-hidden flex flex-col justify-between">
       <div
         className="grid grid-cols-2 items-center h-full"
         style={{ gap: `${Math.round(22 * tokens.spacingMultiplier)}px` }}

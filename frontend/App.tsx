@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   BrandSystemProvider,
   useBrandSystem,
@@ -9,6 +9,7 @@ import { BrandStudioPanel } from './components/BrandStudioPanel';
 import { ShadcnExportModal } from './components/ShadcnExportModal';
 import { AddBlockModal } from './components/Modals/AddBlockModal';
 import { BLOCK_CATALOG } from './constants';
+import { getUnifiedBlockCatalog } from './sdk/block';
 import {
   BlockType,
   BlockCategory,
@@ -24,10 +25,11 @@ import {
   LayoutGrid,
 } from 'lucide-react';
 
-const CATEGORY_LABELS: Record<BlockCategory, string> = {
+const CATEGORY_LABELS: Record<string, string> = {
   identity: 'Identity Block',
   typography: 'Typography Block',
   color: 'Color Block',
+  mockups: 'Mockups & Touchpoints',
   applications: 'Applications Block',
   rules: 'Rules Block',
   content: 'Content Block',
@@ -62,6 +64,7 @@ function AppContent() {
     handleChangeBlockType,
   } = useBrandSystem();
 
+  const unifiedCatalog = useMemo(() => getUnifiedBlockCatalog(), []);
   const [editingPageId, setEditingPageId] = useState<string | null>(null);
 
   // Smart Canvas Width Guard
@@ -96,32 +99,32 @@ function AppContent() {
   const getRowGridClass = (layout: ColumnLayout) => {
     switch (layout) {
       case '1-col':
-        return 'grid-cols-1 h-full';
+        return 'grid-cols-1 grid-rows-[minmax(0,1fr)] h-full min-h-0';
       case '2-col-50-50':
-        return 'grid-cols-1 md:grid-cols-2 h-full';
+        return 'grid-cols-1 md:grid-cols-2 md:grid-rows-[minmax(0,1fr)] h-full min-h-0';
       case '2-col-66-33':
-        return 'grid-cols-1 md:grid-cols-12 h-full';
+        return 'grid-cols-1 md:grid-cols-12 md:grid-rows-[minmax(0,1fr)] h-full min-h-0';
       case '2-col-33-66':
-        return 'grid-cols-1 md:grid-cols-12 h-full';
+        return 'grid-cols-1 md:grid-cols-12 md:grid-rows-[minmax(0,1fr)] h-full min-h-0';
       case '3-col':
-        return 'grid-cols-1 md:grid-cols-3 h-full';
+        return 'grid-cols-1 md:grid-cols-3 md:grid-rows-[minmax(0,1fr)] h-full min-h-0';
       case '4-col':
-        return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4 h-full';
+        return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-[minmax(0,1fr)] h-full min-h-0';
       case '2x2':
-        return 'grid-cols-1 md:grid-cols-2 md:grid-rows-2 h-full';
+        return 'grid-cols-1 md:grid-cols-2 grid-rows-2 md:grid-rows-[repeat(2,minmax(0,1fr))] h-full min-h-0';
       default:
-        return 'grid-cols-1 h-full';
+        return 'grid-cols-1 grid-rows-[minmax(0,1fr)] h-full min-h-0';
     }
   };
 
   const getBlockColSpanClass = (layout: ColumnLayout, index: number) => {
     if (layout === '2-col-66-33') {
-      return index === 0 ? 'md:col-span-8 h-full' : 'md:col-span-4 h-full';
+      return index === 0 ? 'md:col-span-8 h-full min-h-0' : 'md:col-span-4 h-full min-h-0';
     }
     if (layout === '2-col-33-66') {
-      return index === 0 ? 'md:col-span-4 h-full' : 'md:col-span-8 h-full';
+      return index === 0 ? 'md:col-span-4 h-full min-h-0' : 'md:col-span-8 h-full min-h-0';
     }
-    return 'h-full';
+    return 'h-full min-h-0';
   };
 
   return (
@@ -272,9 +275,9 @@ function AppContent() {
                   </div>
 
                   {/* Canonical Fixed Height Presentation Sheet (All blocks share exact identical height) */}
-                  <div className="w-full min-h-[520px] md:h-[620px] lg:h-[640px] flex flex-col">
+                  <div className="w-full h-[560px] sm:h-[600px] md:h-[620px] flex flex-col overflow-hidden">
                     <div
-                      className={`grid gap-4 w-full h-full items-stretch ${getRowGridClass(
+                      className={`grid gap-4 w-full h-full min-h-0 items-stretch ${getRowGridClass(
                         row.layout
                       )}`}
                     >
@@ -304,7 +307,7 @@ function AppContent() {
                             variantState: 'Default',
                           });
                         }}
-                        className={`group/block relative flex flex-col min-w-0 rounded-[24px] transition h-full ${getBlockColSpanClass(
+                        className={`group/block relative flex flex-col min-w-0 min-h-0 rounded-[24px] transition h-full overflow-hidden ${getBlockColSpanClass(
                           row.layout,
                           blkIdx
                         )} ${
@@ -325,7 +328,7 @@ function AppContent() {
                         {isInspectMode && (
                           <div
                             onClick={(e) => e.stopPropagation()}
-                            className="mb-1.5 flex items-center justify-between gap-2 opacity-0 group-hover/block:opacity-100 transition"
+                            className="mb-1.5 flex items-center justify-between gap-2 opacity-0 group-hover/block:opacity-100 transition shrink-0"
                           >
                             <select
                               value={block.type}
@@ -338,9 +341,9 @@ function AppContent() {
                               }
                               className="bg-white rounded-lg px-2.5 py-1 text-[11px] text-zinc-600 focus:outline-none cursor-pointer shadow-sm"
                             >
-                              {BLOCK_CATALOG.map((item) => (
+                              {unifiedCatalog.map((item) => (
                                 <option key={item.type} value={item.type}>
-                                  [{CATEGORY_LABELS[item.category]}] {item.label}
+                                  [{CATEGORY_LABELS[item.category as BlockCategory] || item.category}] {item.label}
                                 </option>
                               ))}
                             </select>
@@ -349,14 +352,14 @@ function AppContent() {
                               onClick={() =>
                                 handleCycleBlockTheme(row.id, block.id)
                               }
-                              className="px-2.5 py-1 rounded-lg bg-white text-[11px] text-zinc-500 hover:text-zinc-900 capitalize shadow-sm"
+                              className="px-2.5 py-1 rounded-lg bg-white text-[11px] text-zinc-500 hover:text-zinc-900 capitalize shadow-sm shrink-0"
                             >
                               {block.theme}
                             </button>
                           </div>
                         )}
 
-                        <div className="flex-1 min-w-0 flex flex-col h-full w-full">
+                        <div className="flex-1 min-w-0 min-h-0 flex flex-col h-full w-full overflow-hidden">
                           <BlockRenderer
                             block={block}
                             tokens={tokens}

@@ -927,14 +927,14 @@ export const INITIAL_PAGES: GuidelinePage[] = [
         blocks: [
           {
             id: 'blk-ov-0a',
-            type: 'shadcn-payment-widget',
-            title: 'Payment Widget',
+            type: 'customer-lifetime-value',
+            title: 'Customer Intelligence & CLV',
             theme: 'light',
           },
           {
             id: 'blk-ov-0b',
-            type: 'typography-sculpture',
-            title: 'Typography Sculpture',
+            type: 'credit-card-mockup',
+            title: 'Physical Touchpoint',
             theme: 'light',
           },
         ],
@@ -945,14 +945,14 @@ export const INITIAL_PAGES: GuidelinePage[] = [
         blocks: [
           {
             id: 'blk-ov-02a',
-            type: 'color-proportion-60-30-10',
-            title: 'Color Palette Balance',
+            type: 'palette-stack',
+            title: 'Color Palette Stack',
             theme: 'light',
           },
           {
             id: 'blk-ov-02b',
-            type: 'shadcn-navigation-preview',
-            title: 'Navigation Shell',
+            type: 'typography-sculpture',
+            title: 'Typography Sculpture',
             theme: 'light',
           },
         ],
@@ -963,8 +963,8 @@ export const INITIAL_PAGES: GuidelinePage[] = [
         blocks: [
           {
             id: 'blk-ov-lockup-1',
-            type: 'brand-lockup-matrix',
-            title: 'Brand Lockup & App Icon Matrix',
+            type: 'billboard-mockup',
+            title: 'Outdoor Billboard Showcase',
             theme: 'light',
           },
         ],
@@ -975,26 +975,14 @@ export const INITIAL_PAGES: GuidelinePage[] = [
         blocks: [
           {
             id: 'blk-ov-mock-1',
-            type: 'ios-homescreen-mockup',
-            title: 'iOS Home Screen Icon',
+            type: 'brand-lockup-matrix',
+            title: 'Brand Lockup & App Icon Matrix',
             theme: 'light',
           },
           {
             id: 'blk-ov-mock-2',
-            type: 'browser-favicon-mockup',
-            title: 'Browser Tab & Favicon',
-            theme: 'light',
-          },
-        ],
-      },
-      {
-        id: 'row-ov-1',
-        layout: '1-col',
-        blocks: [
-          {
-            id: 'blk-ov-1',
-            type: 'outdoor-billboard',
-            title: 'OOH Billboard',
+            type: 'ios-homescreen-mockup',
+            title: 'iOS Home Screen Icon',
             theme: 'light',
           },
         ],

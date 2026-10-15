@@ -220,10 +220,12 @@ export type BlockType =
   | 'lifestyle-photography'
   | 'detached-pill-nav'
   | 'shadcn-slider-anatomy'
-  | 'shadcn-payment-widget'
-  | 'shadcn-navigation-preview'
-  | 'shadcn-interactive-suite'
-  | ShadcnSingleBlockType;
+  | 'customer-lifetime-value'
+  | 'billboard-mockup'
+  | 'credit-card-mockup'
+  | 'palette-stack'
+  | ShadcnSingleBlockType
+  | (string & {});
 
 export type BlockTheme = 'light' | 'tinted' | 'dark' | 'brand';
 
