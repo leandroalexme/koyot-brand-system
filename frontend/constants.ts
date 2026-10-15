@@ -856,6 +856,60 @@ export const BLOCK_CATALOG: Array<{
     category: 'frame',
     description: 'Bloco individual do componente Skeleton.',
   },
+  {
+    type: 'ui-dialog',
+    label: 'Dialog',
+    category: 'frame',
+    description: 'Bloco individual do componente Dialog modal com formulário.',
+  },
+  {
+    type: 'ui-sheet',
+    label: 'Sheet',
+    category: 'frame',
+    description: 'Bloco individual do componente Sheet / Drawer lateral.',
+  },
+  {
+    type: 'ui-input',
+    label: 'Input',
+    category: 'frame',
+    description: 'Bloco individual do componente Input de texto com variantes de tamanho e erro.',
+  },
+  {
+    type: 'ui-textarea',
+    label: 'Textarea',
+    category: 'frame',
+    description: 'Bloco individual do componente Textarea com auto-grow.',
+  },
+  {
+    type: 'ui-card',
+    label: 'Card',
+    category: 'frame',
+    description: 'Bloco individual do componente Card com variantes surface, outline, raised e glow.',
+  },
+  {
+    type: 'ui-tooltip',
+    label: 'Tooltip',
+    category: 'frame',
+    description: 'Bloco individual do componente Tooltip com balão flutuante.',
+  },
+  {
+    type: 'ui-empty',
+    label: 'Empty',
+    category: 'frame',
+    description: 'Bloco individual do componente Empty state.',
+  },
+  {
+    type: 'ui-dropzone',
+    label: 'Dropzone',
+    category: 'frame',
+    description: 'Bloco individual do componente Dropzone para upload de arquivos.',
+  },
+  {
+    type: 'ui-command',
+    label: 'Command',
+    category: 'frame',
+    description: 'Bloco individual do componente Command palette ⌘K.',
+  },
 ];
 
 export const INITIAL_PAGES: GuidelinePage[] = [
@@ -1517,6 +1571,99 @@ export const INITIAL_PAGES: GuidelinePage[] = [
             title: 'Skeleton',
             theme: 'light',
             variant: 'Profile row',
+          },
+        ],
+      },
+      {
+        id: 'row-cp-14',
+        layout: '2-col-50-50',
+        blocks: [
+          {
+            id: 'blk-cp-dialog',
+            type: 'ui-dialog',
+            title: 'Dialog',
+            theme: 'light',
+            variant: 'Form modal',
+          },
+          {
+            id: 'blk-cp-sheet',
+            type: 'ui-sheet',
+            title: 'Sheet',
+            theme: 'light',
+            variant: 'Right drawer',
+          },
+        ],
+      },
+      {
+        id: 'row-cp-15',
+        layout: '2-col-50-50',
+        blocks: [
+          {
+            id: 'blk-cp-input',
+            type: 'ui-input',
+            title: 'Input',
+            theme: 'light',
+            variant: 'Default',
+          },
+          {
+            id: 'blk-cp-textarea',
+            type: 'ui-textarea',
+            title: 'Textarea',
+            theme: 'light',
+            variant: 'Default',
+          },
+        ],
+      },
+      {
+        id: 'row-cp-16',
+        layout: '2-col-50-50',
+        blocks: [
+          {
+            id: 'blk-cp-card',
+            type: 'ui-card',
+            title: 'Card',
+            theme: 'light',
+            variant: 'Surface card',
+          },
+          {
+            id: 'blk-cp-tooltip',
+            type: 'ui-tooltip',
+            title: 'Tooltip',
+            theme: 'light',
+            variant: 'Default top',
+          },
+        ],
+      },
+      {
+        id: 'row-cp-17',
+        layout: '2-col-50-50',
+        blocks: [
+          {
+            id: 'blk-cp-empty',
+            type: 'ui-empty',
+            title: 'Empty',
+            theme: 'light',
+            variant: 'Default',
+          },
+          {
+            id: 'blk-cp-dropzone',
+            type: 'ui-dropzone',
+            title: 'Dropzone',
+            theme: 'light',
+            variant: 'Default upload',
+          },
+        ],
+      },
+      {
+        id: 'row-cp-18',
+        layout: '1-col',
+        blocks: [
+          {
+            id: 'blk-cp-command',
+            type: 'ui-command',
+            title: 'Command',
+            theme: 'light',
+            variant: 'Command palette',
           },
         ],
       },

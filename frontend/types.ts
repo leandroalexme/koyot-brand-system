@@ -181,7 +181,9 @@ export type ShadcnSingleBlockType =
   | 'ui-textarea'
   | 'ui-toast'
   | 'ui-toggle'
-  | 'ui-tooltip';
+  | 'ui-tooltip'
+  | 'ui-empty'
+  | 'ui-dropzone';
 
 export type BlockType =
   | 'hero-manifesto'
