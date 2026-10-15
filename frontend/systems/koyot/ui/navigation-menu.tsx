@@ -33,8 +33,14 @@ function NavigationMenuList({ className, ...props }: React.ComponentProps<'ul'>)
   );
 }
 
-function NavigationMenuItem({ className, ...props }: React.ComponentProps<'li'>) {
-  return <li data-slot="navigation-menu-item" className={cn('relative', className)} {...props} />;
+function NavigationMenuItem({ className, children, ...props }: React.ComponentProps<'li'>) {
+  return (
+    <li data-slot="navigation-menu-item" className={cn('relative', className)} {...props}>
+      <MenuPrimitive.Root>
+        {children}
+      </MenuPrimitive.Root>
+    </li>
+  );
 }
 
 function NavigationMenuTrigger({
